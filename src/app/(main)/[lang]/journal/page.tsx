@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 import { getMainDict } from "@/config/main-i18n";
 import { Container } from "@/components/ui/container";
 import { PageIntro } from "@/components/article/page-intro";
@@ -10,14 +10,14 @@ import { mainMetadata } from "@/lib/seo";
 type Props = PageProps<"/[lang]/journal">;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const lang = (await params).lang as Locale;
+  const lang = (await params).lang as MainLocale;
   const t = getMainDict(lang);
   return mainMetadata(lang, { title: t.nav.journal, description: t.pages.journalDescription, path: "/journal" });
 }
 
 /** Every note, whichever language it is written in (other-language notes carry a badge). */
 export default async function JournalPage({ params }: Props) {
-  const lang = (await params).lang as Locale;
+  const lang = (await params).lang as MainLocale;
   const t = getMainDict(lang);
   return (
     <>

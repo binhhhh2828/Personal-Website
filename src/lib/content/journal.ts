@@ -9,7 +9,7 @@ import { mainPath } from "@/config/site";
 /**
  * Journal — personal thoughts and notes on the main site.
  * Files: content/journal/*.mdx (files starting with "_" are ignored).
- * URL: /journal/{slug} for Vietnamese notes, /en/journal/{slug} for English ones —
+ * URL: /journal/{slug} for Vietnamese notes, /en/… or /zh/journal/{slug} for English or Chinese ones —
  * each note lives in the language it is written in.
  */
 
@@ -28,7 +28,7 @@ const journalSchema = z.object({
   updatedAt: date.optional(),
   tags: z.array(z.string()).default([]),
   /** Language the note is written in; it is published under that language only. */
-  language: z.enum(["en", "vi"]).default("vi"),
+  language: z.enum(["vi", "en", "zh"]).default("vi"),
   /** Public path or URL. Shown as a frame until the file exists. */
   coverImage: z.string().optional(),
   draft: z.boolean().default(false),

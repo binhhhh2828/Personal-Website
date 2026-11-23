@@ -1,7 +1,7 @@
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 
-export function formatDate(date: Date, lang: Locale | "en" = "en") {
-  return new Intl.DateTimeFormat(lang === "vi" ? "vi-VN" : "en-GB", {
+export function formatDate(date: Date, lang: MainLocale = "en") {
+  return new Intl.DateTimeFormat(lang === "vi" ? "vi-VN" : lang === "zh" ? "zh-CN" : "en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",

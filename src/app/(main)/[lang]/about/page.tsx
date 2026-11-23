@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 import { getMainDict } from "@/config/main-i18n";
 import { getProfile } from "@/config/profile";
 import { mainPath } from "@/config/site";
@@ -15,7 +15,7 @@ import { mainMetadata } from "@/lib/seo";
 type Props = PageProps<"/[lang]/about">;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const lang = (await params).lang as Locale;
+  const lang = (await params).lang as MainLocale;
   const p = getPageContent("main", lang, "about");
   return mainMetadata(lang, {
     title: p?.title ?? getMainDict(lang).nav.about,
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 /** The life story: chapters written in content/pages/main/{lang}/about.mdx. */
 export default async function AboutPage({ params }: Props) {
-  const lang = (await params).lang as Locale;
+  const lang = (await params).lang as MainLocale;
   const p = getPageContent("main", lang, "about");
   if (!p) notFound();
   const t = getMainDict(lang).about;

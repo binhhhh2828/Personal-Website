@@ -1,11 +1,11 @@
 import Link from "next/link";
 import type { JournalEntry } from "@/lib/content/journal";
 import { formatDate, isoDate } from "@/lib/format";
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 import { getMainDict } from "@/config/main-i18n";
 
 /** Journal index rows: date, title, description. Hairline separated. */
-export function JournalList({ entries, emptyText, lang = "vi" }: { entries: JournalEntry[]; emptyText: string; lang?: Locale }) {
+export function JournalList({ entries, emptyText, lang = "vi" }: { entries: JournalEntry[]; emptyText: string; lang?: MainLocale }) {
   const t = getMainDict(lang).journal;
   if (entries.length === 0) {
     return <p className="rounded-[28px] bg-canvas px-6 py-10 text-center text-muted md:px-10">{emptyText}</p>;

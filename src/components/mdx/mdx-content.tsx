@@ -1,7 +1,7 @@
 import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { mdxComponentsFor } from "./components";
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 
 /**
  * Renders an MDX string on the server at build time. Content is author-controlled.
@@ -14,7 +14,7 @@ export function MdxContent({
 }: {
   source: string;
   variant?: "prose" | "story";
-  lang?: Locale;
+  lang?: MainLocale;
 }) {
   return (
     <div className={variant === "prose" ? "prose" : undefined}>

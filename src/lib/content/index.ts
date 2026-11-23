@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { getCategory, READING_WPM, type SectionId } from "@/config/content";
-import { locales, type Locale } from "@/config/i18n";
+import { locales, type Locale, type MainLocale } from "@/config/i18n";
 import { ieltsHref } from "@/config/site";
 import { frontmatterSchema, type Frontmatter } from "./schema";
 
@@ -217,8 +217,8 @@ export type PageContent = { title: string; description: string; body: string };
  * Returns undefined if the file does not exist.
  */
 export function getPageContent(siteKey: "ielts", lang: Locale, name: string): PageContent | undefined;
-export function getPageContent(siteKey: "main", lang: Locale, name: string): PageContent | undefined;
-export function getPageContent(siteKey: "ielts" | "main", lang: Locale, name: string): PageContent | undefined {
+export function getPageContent(siteKey: "main", lang: MainLocale, name: string): PageContent | undefined;
+export function getPageContent(siteKey: "ielts" | "main", lang: MainLocale, name: string): PageContent | undefined {
   const file = path.join(PAGES_ROOT, siteKey, lang, `${name}.mdx`);
   if (!fs.existsSync(file)) return undefined;
   const { data, content } = matter(fs.readFileSync(file, "utf8"));

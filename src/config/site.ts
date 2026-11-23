@@ -52,13 +52,13 @@ export function ieltsAbsolute(path = "/") {
 
 /**
  * Path on the personal site in a given language. Vietnamese (the default) lives at the
- * root — "/about" — and English under "/en" — "/en/about". Keeps any "#hash".
+ * root — "/about" — and the others under their code — "/en/about", "/zh/about". Keeps any "#hash".
  */
-export function mainPath(lang: "vi" | "en", path = "/") {
+export function mainPath(lang: "vi" | "en" | "zh", path = "/") {
   const p = path.startsWith("/") ? path : `/${path}`;
   if (lang === "vi") return p;
   const [pathname, hash] = p.split("#");
-  const localized = pathname === "/" ? "/en" : `/en${pathname}`;
+  const localized = pathname === "/" ? `/${lang}` : `/${lang}${pathname}`;
   return hash !== undefined ? `${localized}#${hash}` : localized;
 }
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { localeLabels, locales, type Locale } from "@/config/i18n";
+import { localeLabels, locales, mainLocales, type Locale, type MainLocale } from "@/config/i18n";
 import { ielts, ieltsAbsolute, mainAbsolute, mainPath, site } from "@/config/site";
 
 /**
@@ -22,10 +22,10 @@ type PageMeta = {
 
 /**
  * Personal-site metadata. `path` is the language-neutral path ("/about"); the canonical URL
- * and hreflang alternates are built for both languages (vi at the root, en under /en).
+ * and hreflang alternates are built for every language (vi at the root, en and zh under /en, /zh).
  * Set `bilingual: false` for pages that exist in one language only (journal entries).
  */
-export function mainMetadata(lang: Locale, meta: PageMeta & { bilingual?: boolean }): Metadata {
+export function mainMetadata(lang: MainLocale, meta: PageMeta & { bilingual?: boolean }): Metadata {
   const url = mainAbsolute(mainPath(lang, meta.path));
   const bilingual = meta.bilingual ?? true;
   return {
@@ -35,8 +35,7 @@ export function mainMetadata(lang: Locale, meta: PageMeta & { bilingual?: boolea
       canonical: url,
       ...(bilingual && {
         languages: {
-          vi: mainAbsolute(mainPath("vi", meta.path)),
-          en: mainAbsolute(mainPath("en", meta.path)),
+          ...Object.fromEntries(mainLocales.map((l) => [localeLabels[l].tag, mainAbsolute(mainPath(l, meta.path))])),
           "x-default": mainAbsolute(mainPath("vi", meta.path)),
         },
       }),
@@ -48,7 +47,7 @@ export function mainMetadata(lang: Locale, meta: PageMeta & { bilingual?: boolea
       title: meta.title ?? site.name,
       description: meta.description,
       locale: localeLabels[lang].ogLocale,
-      ...(bilingual && { alternateLocale: locales.filter((l) => l !== lang).map((l) => localeLabels[l].ogLocale) }),
+      ...(bilingual && { alternateLocale: mainLocales.filter((l) => l !== lang).map((l) => localeLabels[l].ogLocale) }),
       ...(meta.image && { images: [meta.image] }),
     },
     twitter: { card: meta.image ? "summary_large_image" : "summary" },

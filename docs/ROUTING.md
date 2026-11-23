@@ -84,18 +84,19 @@ For Firefox or Safari, add `127.0.0.1 ielts.localhost` to your hosts file.
 
 ## Personal site languages
 
-The personal site has a Vietnamese version (the default) and an English version. Each page has one URL per language:
+The personal site has three versions: Vietnamese (the default), English and Simplified Chinese. IELTS Writing Lab stays Vietnamese and English only; links from a Chinese page go to the English IELTS site. Each page has one URL per language:
 
 | Language | URL | Served from |
 | --- | --- | --- |
 | Vietnamese | `/about` | `app/(main)/[lang]/…` with `lang=vi`. `proxy.ts` rewrites the request internally. |
 | English | `/en/about` | `app/(main)/[lang]/…` with `lang=en` |
+| Chinese | `/zh/about` | `app/(main)/[lang]/…` with `lang=zh` |
 
-- **Redirects:** `/vi/…` redirects (308) to the root URL, so every page has exactly one Vietnamese URL. When a visitor picks English with the VI | EN switch, it saves a `lang` cookie. After that, `/` sends them to `/en` (307).
+- **Redirects:** `/vi/…` redirects (308) to the root URL, so every page has exactly one Vietnamese URL. When a visitor picks English or Chinese with the VI | EN | 中 switch, it saves a `lang` cookie. After that, `/` sends them to `/en` or `/zh` (307).
 - **Building links:** use `mainPath(lang, "/about")` from `src/config/site.ts`.
 - **Where the text lives:**
   - UI strings: `src/config/main-i18n.ts`
-  - Profile text: `src/config/profile.ts` (`text.vi` / `text.en`)
-  - Life story: `content/pages/main/{vi,en}/about.mdx`
-- **Journal notes:** each note is published only in the language set by its `language` front-matter, at `/journal/slug` for Vietnamese or `/en/journal/slug` for English.
-- **SEO:** every page lists `hreflang` alternates for `vi`, `en` and `x-default` (vi). The sitemap lists both versions of each page.
+  - Profile text: `src/config/profile.ts` (`text.vi` / `text.en` / `text.zh`)
+  - Life story: `content/pages/main/{vi,en,zh}/about.mdx`
+- **Journal notes:** each note is published only in the language set by its `language` front-matter, at `/journal/slug` for Vietnamese, or `/en/journal/slug` and `/zh/journal/slug` for English and Chinese.
+- **SEO:** every page lists `hreflang` alternates for `vi`, `en`, `zh-CN` and `x-default` (vi). The sitemap lists all three versions of each page.

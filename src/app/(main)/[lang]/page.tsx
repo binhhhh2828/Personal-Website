@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ielts, ieltsHrefFromMain, mainPath, site } from "@/config/site";
-import type { Locale } from "@/config/i18n";
+import { ieltsLocaleFor, type MainLocale } from "@/config/i18n";
 import { getMainDict } from "@/config/main-i18n";
 import { getProfile } from "@/config/profile";
 import { Container } from "@/components/ui/container";
@@ -20,7 +20,7 @@ import { getJournal } from "@/lib/content/journal";
 import { mainMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]">): Promise<Metadata> {
-  const lang = (await params).lang as Locale;
+  const lang = (await params).lang as MainLocale;
   return {
     ...mainMetadata(lang, { description: getMainDict(lang).siteDescription, path: "/" }),
     title: { absolute: site.name },
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps<"/[lang]">): Promis
  * story timeline, hover-reveal works, flip cards, cursor spotlight, draggable Polaroids.
  */
 export default async function Home({ params }: PageProps<"/[lang]">) {
-  const lang = (await params).lang as Locale;
+  const lang = (await params).lang as MainLocale;
   const t = getMainDict(lang);
   const h = t.home;
   const profile = getProfile(lang);
@@ -90,6 +90,14 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
               <p key={p}>{p}</p>
             ))}
           </div>
+          <dl className="facts mt-8">
+            {profile.facts.map((f) => (
+              <div key={f.label} className="fact">
+                <dt>{f.label}</dt>
+                <dd>{f.value}</dd>
+              </div>
+            ))}
+          </dl>
           <div className="mt-10">
             <StoryTimeline chapters={chapters} lang={lang} />
           </div>
@@ -147,11 +155,6 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
               );
             })}
           </ul>
-          <p className="mt-8">
-            <Link href={href("/research")} className="link link-more">
-              {h.research}
-            </Link>
-          </p>
         </Container>
       </section>
 
@@ -171,7 +174,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
 
           {/* IELTS Writing Lab — one exploration, given a black "Pro" tile */}
           <a
-            href={ieltsHrefFromMain(`/${lang}`)}
+            href={ieltsHrefFromMain(`/${ieltsLocaleFor(lang)}`)}
             className="on-black tile-link reveal-scroll relative mt-5 block overflow-hidden rounded-[28px] px-7 py-12 text-center md:px-12 md:py-20"
           >
             <Spotlight />

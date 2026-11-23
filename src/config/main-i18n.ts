@@ -1,9 +1,9 @@
-import type { Locale } from "./i18n";
+import type { MainLocale } from "./i18n";
 
 /**
- * UI strings for the personal site (vi is the default language, en is under /en).
+ * UI strings for the personal site (vi is the default language; en and zh are under /en, /zh).
  * Personal content (headline, works, hobbies…) lives in profile.ts; the life story in
- * content/pages/main/{vi,en}/about.mdx.
+ * content/pages/main/{vi,en,zh}/about.mdx.
  */
 const vi = {
   siteDescription:
@@ -12,7 +12,7 @@ const vi = {
   skip: "Chuyển đến nội dung",
   menu: "Menu",
   close: "Đóng",
-  nav: { about: "Giới thiệu", projects: "Dự án", research: "Nghiên cứu", journal: "Nhật ký", gallery: "Ảnh", ielts: "IELTS" },
+  nav: { about: "Giới thiệu", projects: "Dự án", journal: "Nhật ký", gallery: "Ảnh", ielts: "IELTS" },
   footer: { personal: "Cá nhân", contact: "Liên hệ", elsewhere: "Mạng xã hội" },
 
   home: {
@@ -21,9 +21,8 @@ const vi = {
     aboutEyebrow: "Giới thiệu",
     readFullStory: "Đọc toàn bộ câu chuyện",
     worksEyebrow: "Dự án tiêu biểu",
-    worksTitle: "Những thứ tôi đã làm và học.",
+    worksTitle: "Những thứ mình đã làm và học.",
     allProjects: "Tất cả dự án",
-    research: "Nghiên cứu",
     explorationsEyebrow: "Khám phá",
     explorationsTitle: "Những điều tôi cứ quay lại mãi.",
     ieltsEyebrow: "Một chuyến khám phá ngôn ngữ",
@@ -46,7 +45,7 @@ const vi = {
     portraitLabel: "Chân dung",
     aboutPhotoAlt: "Tôi lúc nhỏ, đang cười trên gối",
     project: "Dự án",
-    researchKind: "Nghiên cứu",
+    researchKind: "Học thuật",
   },
 
   effects: {
@@ -69,11 +68,8 @@ const vi = {
 
   pages: {
     projectsEyebrow: "Dự án tiêu biểu",
-    projectsTitle: "Dự án",
-    projectsDescription: "Những thứ tôi đã làm — sản phẩm, công cụ và các thử nghiệm nhỏ.",
-    researchEyebrow: "Dự án tiêu biểu",
-    researchTitle: "Nghiên cứu",
-    researchDescription: "Những câu hỏi tôi đang tìm hiểu, và những gì tôi tìm ra.",
+    projectsTitle: "Dự án & học thuật",
+    projectsDescription: "Những thứ mình đã làm — sản phẩm, công cụ, thử nghiệm nhỏ và các dự án học thuật.",
     comingSoon: "Sắp có.",
     journalTitle: "Suy nghĩ và ghi chép.",
     journalDescription: "Những suy nghĩ cá nhân — về học, về làm, và mọi thứ ở giữa.",
@@ -123,7 +119,7 @@ const en: typeof vi = {
   skip: "Skip to content",
   menu: "Menu",
   close: "Close",
-  nav: { about: "About", projects: "Projects", research: "Research", journal: "Journal", gallery: "Gallery", ielts: "IELTS" },
+  nav: { about: "About", projects: "Projects", journal: "Journal", gallery: "Gallery", ielts: "IELTS" },
   footer: { personal: "Personal", contact: "Contact", elsewhere: "Elsewhere" },
 
   home: {
@@ -134,7 +130,6 @@ const en: typeof vi = {
     worksEyebrow: "Selected works",
     worksTitle: "Things I’ve built and studied.",
     allProjects: "All projects",
-    research: "Research",
     explorationsEyebrow: "Explorations",
     explorationsTitle: "What I keep coming back to.",
     ieltsEyebrow: "An exploration in language",
@@ -157,7 +152,7 @@ const en: typeof vi = {
     portraitLabel: "Portrait",
     aboutPhotoAlt: "Me as a kid, smiling on a pillow",
     project: "Project",
-    researchKind: "Research",
+    researchKind: "Academic",
   },
 
   effects: {
@@ -180,11 +175,8 @@ const en: typeof vi = {
 
   pages: {
     projectsEyebrow: "Selected works",
-    projectsTitle: "Projects",
-    projectsDescription: "Things I have built — products, tools and experiments.",
-    researchEyebrow: "Selected works",
-    researchTitle: "Research",
-    researchDescription: "Questions I am investigating, and what I found.",
+    projectsTitle: "Projects & academic work",
+    projectsDescription: "Things I have built — products, tools, small experiments and academic projects.",
     comingSoon: "Coming soon.",
     journalTitle: "Thoughts and notes.",
     journalDescription: "Personal thoughts and notes — on learning, building and everything in between.",
@@ -227,9 +219,114 @@ const en: typeof vi = {
   },
 };
 
-export type MainDict = typeof vi;
-const dicts: Record<Locale, MainDict> = { vi, en };
+const zh: typeof vi = {
+  siteDescription: "Lại Bình —— 越南密码技术学院（KMA）的信息技术专业学生，喜欢把一切写下来：代码、日记、奇怪的梦，还有学英语的旅程。",
+  langSwitch: "语言",
+  skip: "跳到正文",
+  menu: "菜单",
+  close: "关闭",
+  nav: { about: "关于我", projects: "项目", journal: "日记", gallery: "相册", ielts: "IELTS" },
+  footer: { personal: "个人", contact: "联系", elsewhere: "社交媒体" },
 
-export function getMainDict(lang: Locale): MainDict {
+  home: {
+    readStory: "读我的故事",
+    seeWork: "看看我的作品",
+    aboutEyebrow: "关于我",
+    readFullStory: "阅读完整故事",
+    worksEyebrow: "精选作品",
+    worksTitle: "我做过、学过的东西。",
+    allProjects: "全部项目",
+    explorationsEyebrow: "探索",
+    explorationsTitle: "我总会回到的那些事。",
+    ieltsEyebrow: "一场关于语言的探索",
+    visitLab: "去实验室看看",
+    ieltsTagline: "学会思考，而不只是学会写作。",
+    journalEyebrow: "日记",
+    journalTitle: "想法与笔记。",
+    allNotes: "全部笔记",
+    journalEmpty: "第一篇笔记正在写。",
+    beyondEyebrow: "工作之外",
+    beyondTitle: "键盘之外的生活。",
+    moreInStory: "在故事里看更多",
+    beyondHint: "刮开每张照片",
+    beyondHintDrag: "，还可以把它们在桌上拖来拖去",
+    tidy: "整理一下",
+    contactEyebrow: "联系",
+    contactTitle: "聊聊吧。",
+    emailMissing: "[Placeholder] 在 src/config/profile.ts 里填写邮箱",
+    portraitAlt: "肖像：",
+    portraitLabel: "肖像",
+    aboutPhotoAlt: "小时候的我，靠在枕头上笑",
+    project: "项目",
+    researchKind: "学术",
+  },
+
+  effects: {
+    scratch: "刮开看照片",
+    scratchShort: "刮一刮",
+    reveal: "显示照片",
+    flip: "点击翻面 ↻",
+    timeline: "我的故事章节",
+    readChapter: "阅读这一章",
+    openAlbum: "打开相册",
+  },
+
+  about: {
+    chapters: "章节",
+    thanksTitle: "谢谢你读到这里。",
+    thanksBody: "看看我在做什么，或者来打个招呼。",
+    seeWork: "看看我的作品",
+    getInTouch: "联系我",
+  },
+
+  pages: {
+    projectsEyebrow: "精选作品",
+    projectsTitle: "项目与学术",
+    projectsDescription: "我做过的东西 —— 产品、工具、小实验，以及学术项目。",
+    comingSoon: "即将推出。",
+    journalTitle: "想法与笔记。",
+    journalDescription: "个人的想法与笔记 —— 关于学习、创造，以及两者之间的一切。",
+    galleryEyebrow: "相册",
+    galleryTitle: "照片，几乎没有修过。",
+    galleryDescription: "童年、上学时光和一些游戏截图。少数预览对所有人开放 —— 完整相册已加密，需要密码才能查看。",
+  },
+
+  journal: {
+    minRead: "分钟阅读",
+    draft: "草稿 —— 仅在开发环境中显示",
+    draftBadge: "草稿",
+    onThisPage: "本文目录",
+    previous: "上一篇",
+    next: "下一篇",
+    otherLanguage: "以其他语言写成",
+    cover: "封面图",
+  },
+
+  gallery: {
+    locked: "完整相册已上锁",
+    password: "密码",
+    unlock: "解锁",
+    unlocking: "正在解锁…",
+    wait: (s: number) => `请等待 ${s} 秒`,
+    wrong: "不对哦，再试一次。",
+    unlocked: "已解锁 —— 完整相册在此标签页中打开。",
+    lockAgain: "重新上锁",
+    count: (n: number) => `${n} 张照片`,
+    lockedCount: (n: number) => `${n} 张已上锁`,
+    enterPassword: "输入密码即可查看",
+    empty: "相册正在准备中。",
+    openPhoto: (n: number) => `打开第 ${n} 张照片`,
+    preview: (n: number) => `预览 ${n}`,
+    photoOf: (i: number, n: number) => `第 ${i} 张，共 ${n} 张`,
+    previous: "上一张",
+    nextPhoto: "下一张",
+    close: "关闭",
+  },
+};
+
+export type MainDict = typeof vi;
+const dicts: Record<MainLocale, MainDict> = { vi, en, zh };
+
+export function getMainDict(lang: MainLocale): MainDict {
   return dicts[lang];
 }

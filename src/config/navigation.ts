@@ -1,4 +1,4 @@
-import type { Locale } from "./i18n";
+import { ieltsLocaleFor, type Locale, type MainLocale } from "./i18n";
 import { ieltsHref, ieltsHrefFromMain, mainHrefFromIelts, mainPath } from "./site";
 import { getMainDict } from "./main-i18n";
 import { sections, type SectionId } from "./content";
@@ -16,8 +16,9 @@ type From = "main" | "ielts";
  * Global navigation — the personal brand. Rendered on BOTH sites (Apple-style global bar),
  * so links are built relative to whichever site is rendering, in the reader's language.
  */
-export function globalNav(from: From, lang: Locale = "vi"): NavItem[] {
+export function globalNav(from: From, lang: MainLocale = "vi"): NavItem[] {
   const t = getMainDict(lang).nav;
+  const il = ieltsLocaleFor(lang);
   const main = (path: string): NavItem =>
     from === "main"
       ? { label: "", href: mainPath(lang, path) }
@@ -25,12 +26,11 @@ export function globalNav(from: From, lang: Locale = "vi"): NavItem[] {
   return [
     { ...main("/about"), label: t.about },
     { ...main("/projects"), label: t.projects },
-    { ...main("/research"), label: t.research },
     { ...main("/journal"), label: t.journal },
     { ...main("/gallery"), label: t.gallery },
     from === "main"
-      ? { label: t.ielts, href: ieltsHrefFromMain(`/${lang}`), crossSite: true }
-      : { label: t.ielts, href: ieltsHref(`/${lang}`) },
+      ? { label: t.ielts, href: ieltsHrefFromMain(`/${il}`), crossSite: true }
+      : { label: t.ielts, href: ieltsHref(`/${il}`) },
   ];
 }
 
@@ -48,8 +48,9 @@ export function ieltsNav(lang: Locale): NavItem[] {
 }
 
 /** Footer directory, shared by both sites. */
-export function footerColumns(from: From, lang: Locale = "vi") {
+export function footerColumns(from: From, lang: MainLocale = "vi") {
   const t = getMainDict(lang);
+  const il: Locale = ieltsLocaleFor(lang);
   const m = (path: string) => (from === "main" ? mainPath(lang, path) : mainHrefFromIelts(mainPath(lang, path)));
   const i = (path: string) => (from === "main" ? ieltsHrefFromMain(path) : ieltsHref(path));
   const crossToIelts = from === "main";
@@ -60,7 +61,6 @@ export function footerColumns(from: From, lang: Locale = "vi") {
       links: [
         { label: t.nav.about, href: m("/about") },
         { label: t.nav.projects, href: m("/projects") },
-        { label: t.nav.research, href: m("/research") },
         { label: t.nav.journal, href: m("/journal") },
         { label: t.nav.gallery, href: m("/gallery") },
         { label: t.footer.contact, href: m("/#contact") },
@@ -69,7 +69,7 @@ export function footerColumns(from: From, lang: Locale = "vi") {
     {
       title: "IELTS Writing Lab",
       crossSite: crossToIelts,
-      links: ieltsSectionOrder.map((id) => ({ label: sections[id].title[lang], href: i(`/${lang}/${id}`) })),
+      links: ieltsSectionOrder.map((id) => ({ label: sections[id].title[il], href: i(`/${il}/${id}`) })),
     },
   ];
 }

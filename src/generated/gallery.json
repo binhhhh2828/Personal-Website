@@ -15,11 +15,13 @@
       "slug": "childhood",
       "title": {
         "vi": "Tuổi thơ",
-        "en": "Childhood"
+        "en": "Childhood",
+        "zh": "童年"
       },
       "note": {
         "vi": "Uông Bí, những chiếc bánh sinh nhật, một bộ ghế, và một đứa trẻ đã trông hơi hoài niệm từ bé.",
-        "en": "Uông Bí, birthday cakes, a sofa, and a kid who already looked a little nostalgic."
+        "en": "Uông Bí, birthday cakes, a sofa, and a kid who already looked a little nostalgic.",
+        "zh": "汪秘（Uông Bí）、生日蛋糕、一张沙发，还有一个从小就有点怀旧的孩子。"
       },
       "total": 15,
       "previews": [
@@ -48,11 +50,13 @@
       "slug": "school",
       "title": {
         "vi": "Thời đi học",
-        "en": "School days"
+        "en": "School days",
+        "zh": "上学的日子"
       },
       "note": {
         "vi": "Lớp học, khăn quàng đỏ, những buổi tập trung toàn trường và những người bạn đã ở đó.",
-        "en": "Classrooms, red scarves, school assemblies and the friends who were there."
+        "en": "Classrooms, red scarves, school assemblies and the friends who were there.",
+        "zh": "教室、红领巾、全校集会，还有那时在身边的朋友们。"
       },
       "total": 21,
       "previews": [

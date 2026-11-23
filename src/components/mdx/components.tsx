@@ -4,7 +4,7 @@ import { slugifyHeading } from "@/lib/content";
 import { Photo as PhotoFrame } from "@/components/ui/photo";
 import { Split } from "@/components/ui/split";
 import { Container } from "@/components/ui/container";
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 import { getMainDict } from "@/config/main-i18n";
 import { mainPath } from "@/config/site";
 
@@ -117,7 +117,7 @@ function Photo({ src, alt, caption, ratio = "16/9" }: { src: string; alt: string
  * A chapter of the life story: a full-bleed photo that dissolves into the text beside it.
  * Sides alternate automatically from one chapter to the next. Render with variant="story".
  */
-const makeChapter = (lang: Locale) =>
+const makeChapter = (lang: MainLocale) =>
   function Chapter({
   id,
   eyebrow,
@@ -167,7 +167,7 @@ const makeChapter = (lang: Locale) =>
 const base = { h2: H2, h3: H3, a: A, Callout, EssayPrompt, Compare, Placeholder, Photo };
 
 /** Components available inside MDX, with the page language baked into language-aware blocks. */
-export function mdxComponentsFor(lang: Locale = "vi") {
+export function mdxComponentsFor(lang: MainLocale = "vi") {
   return { ...base, Chapter: makeChapter(lang) };
 }
 

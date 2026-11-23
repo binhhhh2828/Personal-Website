@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import "../../globals.css";
-import { isLocale, locales } from "@/config/i18n";
+import { isMainLocale, localeLabels, mainLocales } from "@/config/i18n";
 import { getMainDict } from "@/config/main-i18n";
 import { getProfile } from "@/config/profile";
 import { site } from "@/config/site";
@@ -10,11 +10,11 @@ import { GlobalNav } from "@/components/layout/global-nav";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { EasterEggs } from "@/components/effects/easter-eggs";
 
-/** Personal site, in Vietnamese (served at the root via proxy.ts) and English (/en). */
+/** Personal site, in Vietnamese (served at the root via proxy.ts), English (/en) and Chinese (/zh). */
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return locales.map((lang) => ({ lang }));
+  return mainLocales.map((lang) => ({ lang }));
 }
 
 export const viewport: Viewport = { themeColor: "#06200f" };
@@ -24,18 +24,18 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
   return {
     metadataBase: new URL(site.mainUrl),
     title: { default: site.name, template: `%s — ${site.name}` },
-    description: isLocale(lang) ? getMainDict(lang).siteDescription : site.description,
+    description: isMainLocale(lang) ? getMainDict(lang).siteDescription : site.description,
     authors: [{ name: site.name, url: site.mainUrl }],
   };
 }
 
 export default async function MainLayout({ children, params }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
-  if (!isLocale(lang)) notFound();
+  if (!isMainLocale(lang)) notFound();
   const t = getMainDict(lang);
 
   return (
-    <Document lang={lang} skipLabel={t.skip}>
+    <Document lang={localeLabels[lang].tag} skipLabel={t.skip}>
       <GlobalNav from="main" lang={lang} sticky />
       <main id="main" className="flex-1">
         {children}

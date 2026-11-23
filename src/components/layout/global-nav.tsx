@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 import { getMainDict } from "@/config/main-i18n";
 import { globalNav } from "@/config/navigation";
 import { mainHrefFromIelts, mainPath, site } from "@/config/site";
@@ -11,10 +11,10 @@ import { NavLinks } from "./nav-links";
 /**
  * Global navigation (spec "Primary Navigation Bar"): 44px, dark translucent.
  * The same bar on both sites — the personal brand is always one click away.
- * Sticky on the personal site, with a VI | EN switch; on IELTS it scrolls away and the
+ * Sticky on the personal site, with a VI | EN | 中 switch; on IELTS it scrolls away and the
  * local bar (which has its own switch) sticks instead.
  */
-export function GlobalNav({ from, lang, sticky }: { from: "main" | "ielts"; lang: Locale; sticky: boolean }) {
+export function GlobalNav({ from, lang, sticky }: { from: "main" | "ielts"; lang: MainLocale; sticky: boolean }) {
   const t = getMainDict(lang);
   const brand = <span className="t-body-sm font-semibold text-white">{site.wordmark}</span>;
   return (

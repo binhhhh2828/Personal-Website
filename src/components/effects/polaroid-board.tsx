@@ -45,11 +45,17 @@ export function PolaroidBoard({ cards, tidyLabel = "Tidy up" }: { cards: ReactNo
     setActive(null);
   };
 
+  const perRow = Math.min(3, cards.length);
+  const rows = Math.ceil(cards.length / perRow);
   return (
-    <div className="polaroid-board">
+    <div className="polaroid-board" style={{ "--rows": rows } as CSSProperties}>
       {cards.map((card, i) => {
         const [top, rot] = SCATTER[i % SCATTER.length];
         const { x, y } = offsets[i];
+        const row = Math.floor(i / perRow);
+        const col = i % perRow;
+        // Stagger the second row half a column, like photos tossed on a table.
+        const shift = row % 2 ? 0.05 : 0;
         return (
           <div
             key={i}
@@ -57,8 +63,8 @@ export function PolaroidBoard({ cards, tidyLabel = "Tidy up" }: { cards: ReactNo
             data-dragging={active === i || undefined}
             style={
               {
-                "--left": `${((i + 0.5) / cards.length) * 100}%`,
-                "--top": `${top}rem`,
+                "--left": `${((col + 0.5) / perRow + shift) * 100}%`,
+                "--top": `${row * 24 + top}rem`,
                 "--rot": `${rot}deg`,
                 "--dx": `${x}px`,
                 "--dy": `${y}px`,

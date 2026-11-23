@@ -1,10 +1,25 @@
+/** IELTS Writing Lab languages. */
 export const locales = ["vi", "en"] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "vi";
 
-export const localeLabels: Record<Locale, { short: string; long: string; ogLocale: string }> = {
-  vi: { short: "VI", long: "Tiếng Việt", ogLocale: "vi_VN" },
-  en: { short: "EN", long: "English", ogLocale: "en_US" },
+/** Personal-site languages: the IELTS languages plus Simplified Chinese. */
+export const mainLocales = ["vi", "en", "zh"] as const;
+export type MainLocale = (typeof mainLocales)[number];
+
+export function isMainLocale(value: string): value is MainLocale {
+  return (mainLocales as readonly string[]).includes(value);
+}
+
+/** IELTS has no Chinese version — Chinese readers are sent to the English one. */
+export function ieltsLocaleFor(lang: MainLocale): Locale {
+  return lang === "zh" ? "en" : lang;
+}
+
+export const localeLabels: Record<MainLocale, { short: string; long: string; ogLocale: string; tag: string }> = {
+  vi: { short: "VI", long: "Tiếng Việt", ogLocale: "vi_VN", tag: "vi" },
+  en: { short: "EN", long: "English", ogLocale: "en_US", tag: "en" },
+  zh: { short: "中", long: "中文", ogLocale: "zh_CN", tag: "zh-CN" },
 };
 
 export function isLocale(value: string): value is Locale {

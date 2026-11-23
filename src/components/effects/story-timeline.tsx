@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useId, useRef, useState, type KeyboardEvent } from "react";
 import { cx } from "@/lib/format";
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 import { getMainDict } from "@/config/main-i18n";
 import { mainPath } from "@/config/site";
 
@@ -13,7 +13,7 @@ type Chapter = { id: string; title: string; eyebrow?: string; summary?: string }
  * Interactive timeline of the life-story chapters. Each milestone is a tab: click (or use
  * ←/→) to open its one-line summary, with a link to the full chapter on /about.
  */
-export function StoryTimeline({ chapters, lang = "vi" }: { chapters: Chapter[]; lang?: Locale }) {
+export function StoryTimeline({ chapters, lang = "vi" }: { chapters: Chapter[]; lang?: MainLocale }) {
   const t = getMainDict(lang).effects;
   const [active, setActive] = useState(0);
   const base = useId();

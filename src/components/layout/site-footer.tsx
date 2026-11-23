@@ -3,14 +3,14 @@ import { footerColumns } from "@/config/navigation";
 import { profileShared } from "@/config/profile";
 import { getMainDict } from "@/config/main-i18n";
 import { site } from "@/config/site";
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 import { Container } from "@/components/ui/container";
 
 /**
  * Shared footer (spec "Footer"): #F5F5F7, 12px text at 56% black, a link directory
  * for both sites, then a hairline and the copyright line.
  */
-export function SiteFooter({ from, lang = "vi", note }: { from: "main" | "ielts"; lang?: Locale; note?: string }) {
+export function SiteFooter({ from, lang = "vi", note }: { from: "main" | "ielts"; lang?: MainLocale; note?: string }) {
   const year = new Date().getFullYear();
   const columns = footerColumns(from, lang);
   const t = getMainDict(lang);

@@ -2,7 +2,16 @@ import type { Work } from "@/config/profile";
 import { Photo } from "@/components/ui/photo";
 
 /** Works as photo tiles: image frame on top, meta, title, summary, tag chips. */
-export function WorkGrid({ works, emptyText }: { works: Work[]; emptyText: string }) {
+export function WorkGrid({
+  works,
+  emptyText,
+  kindLabels,
+}: {
+  works: Work[];
+  emptyText: string;
+  /** Badge per kind, e.g. { project: "Project", research: "Academic" }. */
+  kindLabels?: Record<Work["kind"], string>;
+}) {
   if (works.length === 0) {
     return <p className="tile px-6 py-10 text-center text-muted">{emptyText}</p>;
   }
@@ -22,6 +31,7 @@ export function WorkGrid({ works, emptyText }: { works: Work[]; emptyText: strin
             />
             <div className="p-6 md:p-8">
               <p className="t-caption text-badge">
+                {kindLabels && <span>{kindLabels[w.kind]} · </span>}
                 {w.year}
                 {w.role && <span className="text-muted"> · {w.role}</span>}
                 {w.venue && <span className="text-muted"> · {w.venue}</span>}

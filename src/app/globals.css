@@ -50,10 +50,11 @@
   --color-nav: var(--nav);
   --color-leaf: var(--leaf);
 
-  --font-sans: "SF Pro Text", -apple-system, BlinkMacSystemFont, var(--font-inter-face), "Segoe UI", system-ui,
-    sans-serif;
-  --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, var(--font-inter-face), "Segoe UI",
+  /* CJK fallbacks come after the Latin faces, so Chinese text uses a native Chinese font. */
+  --font-sans: "SF Pro Text", -apple-system, BlinkMacSystemFont, var(--font-inter-face), "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC",
     system-ui, sans-serif;
+  --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, var(--font-inter-face), "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
   --font-mono: var(--font-mono-face), ui-monospace, monospace;
 
   /* Radius scale: 0 (structure) · 8 · 11 · 28 (feature cards, images) · full (pills) */
@@ -967,7 +968,7 @@
 @media (min-width: 768px) {
   .polaroid-board {
     display: block;
-    height: 36rem;
+    height: calc(var(--rows, 1) * 24rem + 12rem);
     border-radius: 28px;
     background:
       radial-gradient(60% 70% at 50% 40%, rgba(181, 228, 140, 0.35), transparent 70%),
@@ -977,7 +978,7 @@
     position: absolute;
     left: var(--left);
     top: var(--top);
-    width: min(19rem, 28%);
+    width: min(17rem, 26%);
     cursor: grab;
     touch-action: none;
     user-select: none;
@@ -1202,4 +1203,30 @@ button.gallery-item:hover img {
 }
 .lightbox-bar button:hover {
   background: rgba(255, 255, 255, 0.16);
+}
+
+/* ── Quick facts (home "About"): label over value, in soft pills ── */
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.fact {
+  padding: 10px 16px;
+  border-radius: 16px;
+  background:
+    radial-gradient(90% 120% at 100% 0%, rgba(181, 228, 140, 0.45), transparent 60%),
+    color-mix(in srgb, var(--canvas) 80%, transparent);
+}
+.fact dt {
+  font-size: 12px;
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--badge);
+}
+.fact dd {
+  font-size: 15px;
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--ink);
 }

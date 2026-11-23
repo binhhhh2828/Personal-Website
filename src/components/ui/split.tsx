@@ -3,7 +3,7 @@ import { cx } from "@/lib/format";
 import { Container } from "./container";
 import { Photo } from "./photo";
 import { ScratchReveal } from "@/components/effects/scratch-reveal";
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 
 /**
  * Split feature: a large photo bleeding to the viewport edge on one side, dissolving
@@ -40,7 +40,7 @@ export function Split({
   labelledBy?: string;
   className?: string;
   scratch?: boolean;
-  lang?: Locale;
+  lang?: MainLocale;
   children: ReactNode;
 }) {
   const photo = (

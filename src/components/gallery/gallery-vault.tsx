@@ -3,12 +3,12 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { openList, openPhoto, unlock, type Kdf, type Sealed, type VaultPhoto } from "@/lib/gallery-crypto";
 import { confetti } from "@/lib/confetti";
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 import { getMainDict, type MainDict } from "@/config/main-i18n";
 
 /** Album text may be one string or one per language. */
-type Localized = string | Partial<Record<Locale, string>>;
-const pick = (v: Localized, lang: Locale) => (typeof v === "string" ? v : (v[lang] ?? v.vi ?? v.en ?? ""));
+type Localized = string | Partial<Record<MainLocale, string>>;
+const pick = (v: Localized, lang: MainLocale) => (typeof v === "string" ? v : (v[lang] ?? v.vi ?? v.en ?? ""));
 
 export type GalleryManifest = {
   version: 1;
@@ -35,7 +35,7 @@ const LockIcon = ({ size = 20 }: { size?: number }) => (
  * Private gallery. Previews are public; everything else is AES-encrypted on the server and
  * decrypted here, in memory, once the right password is entered (see scripts/gallery.mjs).
  */
-export function GalleryVault({ manifest, lang = "vi" }: { manifest: GalleryManifest; lang?: Locale }) {
+export function GalleryVault({ manifest, lang = "vi" }: { manifest: GalleryManifest; lang?: MainLocale }) {
   const t = getMainDict(lang).gallery;
   const [key, setKey] = useState<CryptoKey | null>(null);
   const [status, setStatus] = useState<"idle" | "working" | "wrong">("idle");
@@ -132,7 +132,7 @@ function Album({
 }: {
   album: GalleryManifest["albums"][number];
   cryptoKey: CryptoKey | null;
-  lang: Locale;
+  lang: MainLocale;
   t: MainDict["gallery"];
   onLockedClick: () => void;
 }) {

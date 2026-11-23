@@ -12,7 +12,7 @@ import { getJournal, getJournalAdjacent, getJournalEntry } from "@/lib/content/j
 import { formatDate, isoDate } from "@/lib/format";
 import { mainMetadata } from "@/lib/seo";
 import { mainAbsolute } from "@/config/site";
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 import { getMainDict } from "@/config/main-i18n";
 
 export const dynamicParams = false;
@@ -49,7 +49,7 @@ export default async function JournalEntryPage({ params }: Props) {
   const entry = await load(params);
   const { previous, next } = getJournalAdjacent(entry);
   const headings = extractHeadings(entry.body);
-  const lang: Locale = entry.language;
+  const lang: MainLocale = entry.language;
   const t = getMainDict(lang).journal;
 
   const jsonLd = {

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { cx } from "@/lib/format";
-import type { Locale } from "@/config/i18n";
+import type { MainLocale } from "@/config/i18n";
 import { getMainDict } from "@/config/main-i18n";
 
 const BRUSH = 46; // px radius-ish (line width)
@@ -30,7 +30,7 @@ export function ScratchReveal({
   id: string;
   children: ReactNode;
   className?: string;
-  lang?: Locale;
+  lang?: MainLocale;
   /** Overrides the default "Scratch to reveal" hint (e.g. a shorter one on small cards). */
   hint?: string;
 }) {
