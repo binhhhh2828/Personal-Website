@@ -20,7 +20,7 @@ export function IeltsLocalNav({
 }) {
   const t = getDictionary(lang);
   return (
-    <div className="sticky top-0 z-10 border-b border-hairline/70 bg-[rgba(251,251,253,0.8)] backdrop-blur-xl backdrop-saturate-[1.8]">
+    <div className="sticky top-0 z-10 border-b border-hairline/70 bg-[rgba(250,253,251,0.82)] backdrop-blur-xl backdrop-saturate-[1.8]">
       <Container className="relative flex h-[52px] items-center justify-between">
         <Link
           href={ieltsHref(`/${lang}`)}

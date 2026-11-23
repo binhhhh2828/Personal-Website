@@ -128,7 +128,7 @@ export function NavLinks({
         hidden={!open}
         className={cx(
           "absolute inset-x-0 top-full z-30 min-[834px]:hidden",
-          dark ? "bg-[#1d1d1f]" : "border-b border-hairline bg-canvas",
+          dark ? "bg-black" : "border-b border-hairline bg-canvas",
         )}
       >
         <ul className="px-4 pt-2 pb-6">

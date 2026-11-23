@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { profile } from "@/config/profile";
 import { Container } from "@/components/ui/container";
-import { Photo } from "@/components/ui/photo";
 import { PageIntro } from "@/components/article/page-intro";
 import { MdxContent } from "@/components/mdx/mdx-content";
 import { getPageContent } from "@/lib/content";
@@ -27,12 +26,8 @@ export default function AboutPage() {
     <>
       <PageIntro center eyebrow={profile.name} title={p.title} description={p.description} />
 
-      <Container>
-        <Photo src={profile.portrait} alt={`Portrait of ${profile.name}`} ratio="16/9" label="Portrait" priority />
-      </Container>
-
       {chapters.length > 1 && (
-        <Container className="mt-10">
+        <Container>
           <nav aria-label="Chapters" className="flex flex-wrap justify-center gap-2">
             {chapters.map((c) => (
               <a key={c.id} href={`#${c.id}`} className="btn btn-chip">
@@ -43,9 +38,10 @@ export default function AboutPage() {
         </Container>
       )}
 
-      <Container className="mt-6">
+      {/* Chapters render full-bleed: each photo dissolves into the text beside it. */}
+      <div className="mt-4">
         <MdxContent source={p.body} variant="story" />
-      </Container>
+      </div>
 
       <Container className="text-center">
         <div className="tile px-7 py-14 md:py-16">

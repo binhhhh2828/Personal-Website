@@ -2,6 +2,8 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import Link from "next/link";
 import { slugifyHeading } from "@/lib/content";
 import { Photo as PhotoFrame } from "@/components/ui/photo";
+import { Split } from "@/components/ui/split";
+import { Container } from "@/components/ui/container";
 
 function textOf(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") return String(node);
@@ -109,7 +111,8 @@ function Photo({ src, alt, caption, ratio = "16/9" }: { src: string; alt: string
  * <Chapter id="childhood" eyebrow="1998–2010" title="Childhood" image="/images/about/childhood.jpg">
  *   Markdown…
  * </Chapter>
- * A chapter of the life story: large photo frame and text, alternating sides.
+ * A chapter of the life story: a full-bleed photo that dissolves into the text beside it.
+ * Sides alternate automatically from one chapter to the next. Render with variant="story".
  */
 function Chapter({
   id,
@@ -126,25 +129,26 @@ function Chapter({
   imageAlt?: string;
   children: ReactNode;
 }) {
+  const body = (
+    <>
+      {eyebrow && <p className="t-eyebrow mb-2 text-badge">{eyebrow}</p>}
+      <h2 id={id ? `${id}-title` : undefined} className="t-headline">
+        {title}
+      </h2>
+      <div className="prose mt-6 [&>*:first-child]:mt-0">{children}</div>
+    </>
+  );
+  if (!image) {
+    return (
+      <section id={id} aria-labelledby={id ? `${id}-title` : undefined} className="split-alt">
+        <Container className="reveal-scroll py-16 md:py-24">{body}</Container>
+      </section>
+    );
+  }
   return (
-    <section
-      id={id}
-      aria-labelledby={id ? `${id}-title` : undefined}
-      className="group/chapter grid items-center gap-8 border-t border-hairline py-16 first:border-t-0 md:grid-cols-2 md:gap-14 md:py-24"
-    >
-      {image && (
-        <div className="md:group-even/chapter:order-last">
-          <PhotoFrame src={image} alt={imageAlt ?? title} ratio="4/5" label={title} sizes="(min-width: 768px) 480px, 100vw" />
-        </div>
-      )}
-      <div className={image ? "" : "md:col-span-2"}>
-        {eyebrow && <p className="t-eyebrow mb-2 text-badge">{eyebrow}</p>}
-        <h2 id={id ? `${id}-title` : undefined} className="t-headline">
-          {title}
-        </h2>
-        <div className="prose mt-6 [&>*:first-child]:mt-0">{children}</div>
-      </div>
-    </section>
+    <Split alternate id={id} labelledBy={id ? `${id}-title` : undefined} image={image} alt={imageAlt ?? title} label={title}>
+      {body}
+    </Split>
   );
 }
 

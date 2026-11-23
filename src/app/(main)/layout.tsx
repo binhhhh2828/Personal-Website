@@ -4,8 +4,10 @@ import { site } from "@/config/site";
 import { Document } from "@/components/layout/document";
 import { GlobalNav } from "@/components/layout/global-nav";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { EasterEggs } from "@/components/effects/easter-eggs";
+import { profile } from "@/config/profile";
 
-export const viewport: Viewport = { themeColor: "#ffffff" };
+export const viewport: Viewport = { themeColor: "#06200f" };
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.mainUrl),
@@ -22,6 +24,7 @@ export default function MainLayout({ children }: LayoutProps<"/">) {
         {children}
       </main>
       <SiteFooter from="main" />
+      <EasterEggs {...profile.secrets} />
     </Document>
   );
 }

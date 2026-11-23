@@ -93,6 +93,13 @@ export const profile = {
     { title: "[Placeholder] Experience", note: "[Placeholder] A trip, an event, a memory.", image: "/images/beyond/3.jpg" },
   ] as BeyondWorkItem[],
 
+  /** Easter-egg messages (Konami code, clicking the nav wordmark 5×, the DevTools console). */
+  secrets: {
+    konami: "[Placeholder] You found the secret! Write a fun hidden message here.",
+    logo: "[Placeholder] Five clicks — persistent. Another hidden note for the curious.",
+    console: "Hi there, fellow tinkerer 👋 — try ↑↑↓↓←→←→BA on this page.",
+  },
+
   contact: {
     note: "[Placeholder] What you are open to — collaborations, questions, or just saying hello.",
     /** e.g. "hello@yourname.id.vn". Left empty until you add it. */

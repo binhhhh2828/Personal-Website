@@ -15,7 +15,13 @@ export function GlobalNav({ from, sticky }: { from: "main" | "ielts"; sticky: bo
   return (
     <header className={cx("z-20 bg-nav backdrop-blur-xl backdrop-saturate-[1.8]", sticky ? "sticky top-0" : "relative")}>
       <Container size="nav" className="relative flex h-11 items-center justify-between">
-        {from === "main" ? <Link href="/">{brand}</Link> : <a href={mainHrefFromIelts("/")}>{brand}</a>}
+        {from === "main" ? (
+          <Link href="/" data-brand>
+            {brand}
+          </Link>
+        ) : (
+          <a href={mainHrefFromIelts("/")}>{brand}</a>
+        )}
         <NavLinks items={globalNav(from)} menuLabel="Menu" closeLabel="Close" variant="global" />
       </Container>
     </header>

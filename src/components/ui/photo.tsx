@@ -22,6 +22,7 @@ export function Photo({
 }: {
   src: string;
   alt: string;
+  /** CSS aspect-ratio, or "auto" to size from className (e.g. fill a split column). */
   ratio?: string;
   className?: string;
   rounded?: boolean;
@@ -29,16 +30,16 @@ export function Photo({
   sizes?: string;
   /** Short caption inside the placeholder, e.g. "Childhood". */
   label?: string;
-  /** Placeholder background: "surface" on white, "raised" inside grey tiles, "dark" on black. */
+  /** Frame background (soft green gradients, globals.css .ph-*): "surface" on white, "raised" inside tiles, "dark" on dark bands. */
   tone?: "surface" | "raised" | "dark";
 }) {
   const isRemote = /^https?:\/\//.test(src);
   const exists = isRemote || fs.existsSync(path.join(process.cwd(), "public", src));
-  const frame = cx("relative w-full overflow-hidden", tone === "dark" ? "bg-[#1d1d1f]" : tone === "raised" ? "bg-surface-raised" : "bg-surface", rounded && "rounded-[28px]", className);
+  const frame = cx("relative w-full overflow-hidden", tone === "dark" ? "ph-dark" : tone === "raised" ? "ph-raised" : "ph-surface", rounded && "rounded-[28px]", className);
 
   if (!exists) {
     return (
-      <div className={frame} style={{ aspectRatio: ratio }} role="img" aria-label={`${alt} (photo coming soon)`}>
+      <div className={frame} style={ratio === "auto" ? undefined : { aspectRatio: ratio }} role="img" aria-label={`${alt} (photo coming soon)`}>
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-6 text-center">
           <svg aria-hidden width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-faint">
             <rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" strokeWidth="1.5" />
@@ -53,8 +54,8 @@ export function Photo({
   }
 
   return (
-    <div className={frame} style={{ aspectRatio: ratio }}>
-      <Image src={src} alt={alt} fill sizes={sizes} priority={priority} className="object-cover" />
+    <div className={frame} style={ratio === "auto" ? undefined : { aspectRatio: ratio }}>
+      <Image src={src} alt={alt} fill sizes={sizes} priority={priority} className="photo-img object-cover" />
     </div>
   );
 }

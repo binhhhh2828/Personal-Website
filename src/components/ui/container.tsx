@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cx } from "@/lib/format";
 
-/** 980px content column (spec §5); "nav" is the 1024px bar width. 16px gutters, 12px from 1068px. */
+/** Wide content column (~1472px) so sections breathe edge to edge; "prose" stays a narrow reading column. */
 export function Container({
   children,
   className,
@@ -14,10 +14,10 @@ export function Container({
   return (
     <div
       className={cx(
-        "mx-auto w-full px-4 min-[1068px]:px-3",
-        size === "content" && "max-w-[calc(var(--container-content)+24px)]",
-        size === "nav" && "max-w-(--container-nav) min-[1068px]:px-[22px]",
-        size === "prose" && "max-w-[calc(var(--container-prose)+32px)]",
+        "mx-auto w-full px-5 md:px-10",
+        size === "content" && "max-w-[calc(var(--container-content)+80px)]",
+        size === "nav" && "max-w-[calc(var(--container-nav)+80px)]",
+        size === "prose" && "max-w-[calc(var(--container-prose)+80px)]",
         className,
       )}
     >

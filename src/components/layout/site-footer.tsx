@@ -13,7 +13,8 @@ export function SiteFooter({ from, lang = "en", note }: { from: "main" | "ielts"
   const year = new Date().getFullYear();
   const columns = footerColumns(from, lang);
   return (
-    <footer className="mt-24 bg-surface text-[12px] leading-[1.33] tracking-[-0.01em] text-black/56">
+    // The grey fades in from the page above, so the footer has no hard top edge.
+    <footer className="bg-[linear-gradient(to_bottom,var(--canvas)_0,var(--surface)_8rem)] pt-28 text-[12px] leading-[1.33] tracking-[-0.01em] text-muted">
       <Container className="py-10">
         {note && <p className="border-b border-hairline pb-4">{note}</p>}
         <nav aria-label="Footer" className="grid grid-cols-2 gap-8 py-6 sm:grid-cols-3">

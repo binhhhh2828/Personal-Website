@@ -76,7 +76,7 @@ export default async function IeltsHome({ params }: PageProps<"/ielts/[lang]">) 
   return (
     <>
       {/* Hero — black "Pro" tile */}
-      <BlackBand className="pt-14 pb-14 md:pt-24 md:pb-20">
+      <BlackBand className="band-black-soft pt-14 pb-28 md:pt-24 md:pb-40">
         <Container className="reveal text-center">
           <p className="t-eyebrow text-on-black-muted">{ielts.name}</p>
           <h1 lang="en" className="t-hero mx-auto mt-3 max-w-[14ch]">
@@ -94,12 +94,15 @@ export default async function IeltsHome({ params }: PageProps<"/ielts/[lang]">) 
           </div>
         </Container>
         <Container className="mt-12 md:mt-16">
-          <Photo src="/images/ielts/hero.jpg" alt="IELTS Writing Lab" ratio="16/9" label="IELTS Writing Lab" priority tone="dark" />
+          <Photo src="/images/ielts/hero.jpg" alt="IELTS Writing Lab" ratio="16/9" label="IELTS Writing Lab" priority tone="dark" className="fade-bottom" />
         </Container>
       </BlackBand>
 
       {/* Journey */}
-      <section aria-labelledby="journey" className="bg-surface py-16 md:py-24">
+      <section
+        aria-labelledby="journey"
+        className="bg-[linear-gradient(to_bottom,var(--surface)_calc(100%-7rem),var(--canvas))] pt-4 pb-20 md:pb-32"
+      >
         <Container className="text-center">
           <p className="t-eyebrow text-badge">{t.journey}</p>
           <h2 id="journey" className="t-headline mt-2">

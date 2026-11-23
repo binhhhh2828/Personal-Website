@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cx } from "@/lib/format";
 
-/** Eyebrow above a headline. "badge" uses the decorative accent (#B64400), sparingly. */
+/** Eyebrow above a headline. "badge" uses the decorative accent (leaf green), sparingly. */
 export function Eyebrow({
   children,
   className,

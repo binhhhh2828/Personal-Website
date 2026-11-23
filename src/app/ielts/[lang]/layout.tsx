@@ -15,7 +15,7 @@ export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
 }
 
-export const viewport: Viewport = { themeColor: "#ffffff" };
+export const viewport: Viewport = { themeColor: "#06200f" };
 
 export const metadata: Metadata = {
   // Relative OG/canonical values resolve against the public IELTS origin.

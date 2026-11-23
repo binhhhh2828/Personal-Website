@@ -1,30 +1,34 @@
 @import "tailwindcss";
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Design tokens — Apple design system (docs/apple.DESIGN.md).
-   Shared by the personal site and IELTS Writing Lab.
-   White canvas, #F5F5F7 colour-blocked surfaces, one electric blue, no shadows.
+   Design tokens — Apple design system (docs/apple.DESIGN.md) structure,
+   re-tinted green: white canvas, sage-tinted surfaces, one forest-green accent,
+   deep-forest "dark" bands. No shadows. Shared by both sites.
    ────────────────────────────────────────────────────────────────────────── */
 :root {
   --canvas: #ffffff;
-  --surface: #f5f5f7;
-  --surface-raised: #ebebed;
-  --ink: #000000; /* headings */
-  --body: #1d1d1f; /* body copy */
-  --muted: #6e6e73; /* captions, secondary text (≈5:1 on white) */
-  --faint: #86868b; /* placeholders, tertiary (≈3.6:1 — large/meta text only) */
-  --hairline: #d2d2d7;
+  --surface: #f4faee; /* fresh lime mist */
+  --surface-raised: #e6f4d9;
+  --ink: #0b1f10; /* headings */
+  --body: #1a2c1d; /* body copy */
+  --muted: #5a6a55; /* captions, secondary text (≈5.6:1 on white) */
+  --faint: #839179; /* placeholders, tertiary (large/meta text only) */
+  --hairline: #d5e8c8;
 
-  --primary: #0071e3; /* CTAs, focus ring */
-  --accent: #2997ff; /* links on dark */
-  --link: #0066cc; /* links on light (spec accent-1; ≈5.6:1 — #2997FF is only 3:1 on white) */
-  --badge: #b64400; /* decorative eyebrow / badge text */
+  --primary: #108239; /* CTAs, focus ring (white text ≈4.9:1) */
+  --primary-hover: #0c7031;
+  --accent: #8ee05a; /* links on dark */
+  --link: #0f7d36; /* links on light (≈5:1) */
+  --badge: #3a8518; /* eyebrow / badge text — lime green (≈4.6:1) */
+  --leaf: #b5e48c; /* decorative glows */
+  --lime: #8cc63f; /* gradient start */
+  --green: #22a045; /* gradient end */
 
-  --black: #000000; /* dark hero tiles */
-  --on-black: #f5f5f7;
-  --on-black-muted: #a1a1a6;
+  --black: #06200f; /* deep-green dark bands */
+  --on-black: #f1f9ec;
+  --on-black-muted: #a6bd9c;
 
-  --nav: rgba(29, 29, 31, 0.8);
+  --nav: rgba(6, 32, 15, 0.82);
 }
 
 @theme inline {
@@ -44,6 +48,7 @@
   --color-on-black: var(--on-black);
   --color-on-black-muted: var(--on-black-muted);
   --color-nav: var(--nav);
+  --color-leaf: var(--leaf);
 
   --font-sans: "SF Pro Text", -apple-system, BlinkMacSystemFont, var(--font-inter-face), "Segoe UI", system-ui,
     sans-serif;
@@ -56,8 +61,8 @@
   --radius-sm: 11px;
   --radius-md: 28px;
 
-  --container-content: 61.25rem; /* 980px */
-  --container-nav: 64rem; /* 1024px */
+  --container-content: 92rem; /* 1472px — wide, editorial */
+  --container-nav: 92rem;
   --container-prose: 40rem; /* ~68ch at 19px */
 }
 
@@ -66,6 +71,7 @@
     background: var(--canvas);
     -webkit-text-size-adjust: 100%;
     scroll-padding-top: 7rem;
+    overflow-x: clip; /* full-bleed photos never cause sideways scroll */
   }
   body {
     background: var(--canvas);
@@ -90,12 +96,12 @@
 
 /* ── Typography roles (spec §3) ─────────────────────────────────────────── */
 @layer components {
-  /* Hero: Display XS 40 → Display LG 64 → Display XL 80 */
+  /* Hero: 34 → 44 → 52. Kept below Display XL so it sits beside a photo, not over the page. */
   .t-hero {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 40px;
-    line-height: 1.1;
+    font-size: 34px;
+    line-height: 1.12;
     letter-spacing: 0;
     color: var(--ink);
     text-wrap: balance;
@@ -122,9 +128,9 @@
   }
   @media (min-width: 768px) {
     .t-hero {
-      font-size: 64px;
-      line-height: 1.06;
-      letter-spacing: -0.009em;
+      font-size: 44px;
+      line-height: 1.1;
+      letter-spacing: -0.004em;
     }
     .t-display {
       font-size: 48px;
@@ -139,9 +145,9 @@
   }
   @media (min-width: 1068px) {
     .t-hero {
-      font-size: 80px;
-      line-height: 1.05;
-      letter-spacing: -0.015em; /* −1.2px */
+      font-size: 52px;
+      line-height: 1.08;
+      letter-spacing: -0.005em;
     }
     .t-display {
       font-size: 56px;
@@ -240,7 +246,7 @@
     color: #fff;
   }
   .btn-primary:hover {
-    background: #0077ed;
+    background: var(--primary-hover);
   }
   .btn-outline {
     min-height: 44px;
@@ -463,6 +469,151 @@
   color: var(--muted);
 }
 
+/* ── Seamless layout: photos dissolve into the page, bands blend into each other ── */
+
+/* Split feature: big photo bleeding to the viewport edge, fading into the text side.
+   Mobile: photo on top, fading downward under the text. Use data-side="left" to flip,
+   or .split-alt to alternate automatically (About chapters). */
+.split {
+  position: relative;
+}
+.split-media {
+  position: relative;
+  -webkit-mask-image: linear-gradient(to bottom, #000 50%, rgba(0, 0, 0, 0.6) 72%, rgba(0, 0, 0, 0.15) 90%, transparent);
+  mask-image: linear-gradient(to bottom, #000 50%, rgba(0, 0, 0, 0.6) 72%, rgba(0, 0, 0, 0.15) 90%, transparent);
+}
+.split-body {
+  position: relative;
+  margin-top: -3rem;
+}
+/* Mobile: photos below the hero also fade in from the top, so sections meet softly. */
+@media (max-width: 833px) {
+  .split:not(.split-hero) .split-media {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 50%, rgba(0, 0, 0, 0.6) 72%, rgba(0, 0, 0, 0.15) 90%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 50%, rgba(0, 0, 0, 0.6) 72%, rgba(0, 0, 0, 0.15) 90%, transparent);
+  }
+}
+@media (min-width: 834px) {
+  .split {
+    display: flex;
+    align-items: center;
+    min-height: 36rem;
+  }
+  .split-hero {
+    min-height: min(44rem, calc(100svh - 44px));
+  }
+  /* The mask layer spans the full width (integer edges, no rendering seams);
+     the photo sits inside it on one side, and the gradient dissolves its inner edge. */
+  .split-media {
+    --media-w: 56%;
+    position: absolute;
+    inset: 0;
+    /* Eased fade (several stops) — a plain linear ramp leaves a visible band where it ends. */
+    --fade-x: linear-gradient(
+      to right,
+      transparent calc(100% - var(--media-w)),
+      rgba(0, 0, 0, 0.06) calc(100% - var(--media-w) * 0.88),
+      rgba(0, 0, 0, 0.25) calc(100% - var(--media-w) * 0.78),
+      rgba(0, 0, 0, 0.55) calc(100% - var(--media-w) * 0.68),
+      rgba(0, 0, 0, 0.82) calc(100% - var(--media-w) * 0.59),
+      rgba(0, 0, 0, 0.96) calc(100% - var(--media-w) * 0.51),
+      #000 calc(100% - var(--media-w) * 0.45)
+    );
+    --fade-y: linear-gradient(
+      to bottom,
+      transparent 0,
+      rgba(0, 0, 0, 0.35) 6%,
+      rgba(0, 0, 0, 0.85) 13%,
+      #000 19%,
+      #000 81%,
+      rgba(0, 0, 0, 0.85) 87%,
+      rgba(0, 0, 0, 0.35) 94%,
+      transparent 100%
+    );
+    -webkit-mask-image: var(--fade-x), var(--fade-y);
+    -webkit-mask-composite: source-in;
+    mask-image: var(--fade-x), var(--fade-y);
+    mask-composite: intersect;
+  }
+  .split-media-inner {
+    position: absolute;
+    inset-block: 0;
+    right: 0;
+    width: var(--media-w);
+  }
+  .split-hero .split-media {
+    --media-w: 62%;
+  }
+  .split-body {
+    margin-top: 0;
+    width: 46%;
+    padding-right: 2rem;
+  }
+  .split[data-side="left"] .split-media,
+  .split-alt:nth-of-type(even) .split-media {
+    --fade-x: linear-gradient(
+      to left,
+      transparent calc(100% - var(--media-w)),
+      rgba(0, 0, 0, 0.06) calc(100% - var(--media-w) * 0.88),
+      rgba(0, 0, 0, 0.25) calc(100% - var(--media-w) * 0.78),
+      rgba(0, 0, 0, 0.55) calc(100% - var(--media-w) * 0.68),
+      rgba(0, 0, 0, 0.82) calc(100% - var(--media-w) * 0.59),
+      rgba(0, 0, 0, 0.96) calc(100% - var(--media-w) * 0.51),
+      #000 calc(100% - var(--media-w) * 0.45)
+    );
+  }
+  .split[data-side="left"] .split-media-inner,
+  .split-alt:nth-of-type(even) .split-media-inner {
+    right: auto;
+    left: 0;
+  }
+  .split[data-side="left"] .split-body,
+  .split-alt:nth-of-type(even) .split-body {
+    margin-left: auto;
+    padding-right: 0;
+    padding-left: 2rem;
+  }
+}
+
+/* Photo that fades out at the bottom (e.g. into a black band). */
+.fade-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent);
+  mask-image: linear-gradient(to bottom, #000 60%, transparent);
+}
+
+/* Grey band whose top and bottom edges melt into the white canvas — no hard section lines. */
+.band-soft {
+  background: linear-gradient(
+    to bottom,
+    var(--canvas) 0,
+    var(--surface) 7rem,
+    var(--surface) calc(100% - 7rem),
+    var(--canvas) 100%
+  );
+}
+/* Black band that eases into the grey below it. */
+.band-black-soft {
+  background: linear-gradient(to bottom, var(--black) 0, var(--black) calc(100% - 10rem), var(--surface) 100%);
+}
+
+/* Reveal on scroll — pure CSS (scroll-driven animations), no JS. Browsers without
+   support simply show the content. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal-scroll {
+      animation: reveal-scroll linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 28%;
+    }
+    @keyframes reveal-scroll {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+    }
+  }
+}
+
 /* Quiet entrance on hero content only. */
 @media (prefers-reduced-motion: no-preference) {
   .reveal {
@@ -472,6 +623,434 @@
     from {
       opacity: 0;
       transform: translateY(8px);
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Green backgrounds & interactive effects
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Fresh lime → green gradient text, for short display accents (hero name, "Let's talk."). */
+.text-fresh {
+  background: linear-gradient(100deg, var(--lime), var(--green) 55%, var(--primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Photo frames (shown until a real photo is uploaded): soft green mesh gradients. */
+.ph-surface {
+  background:
+    radial-gradient(110% 85% at 88% 8%, #d4efb8 0, transparent 55%),
+    radial-gradient(90% 80% at 8% 100%, #e6f6d6 0, transparent 60%),
+    linear-gradient(160deg, #f7fcf2, #e8f5dc);
+}
+.ph-raised {
+  background:
+    radial-gradient(110% 85% at 85% 10%, #c6e8a0 0, transparent 55%),
+    radial-gradient(90% 80% at 10% 100%, #dcf0c8 0, transparent 60%),
+    linear-gradient(160deg, #f1f9e9, #dfefd0);
+}
+.ph-dark {
+  background:
+    radial-gradient(90% 80% at 80% 10%, rgba(57, 181, 74, 0.35) 0, transparent 60%),
+    linear-gradient(160deg, #0e3a1c, #06200f);
+}
+
+/* Hero glow: green clouds behind the hero that drift slower than the page (parallax). */
+.aurora {
+  isolation: isolate;
+}
+.aurora::before {
+  content: "";
+  position: absolute;
+  inset: -6rem -10% -4rem;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 46% at 18% 34%, rgba(181, 228, 140, 0.55), transparent 70%),
+    radial-gradient(30% 40% at 46% 88%, rgba(57, 181, 74, 0.22), transparent 70%),
+    radial-gradient(26% 30% at 92% 12%, rgba(217, 249, 157, 0.28), transparent 70%);
+  filter: blur(12px);
+  /* Fade the glow out before its box ends, so it never leaves a straight edge. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 55%, transparent 92%);
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 55%, transparent 92%);
+}
+
+/* Split layouts: the text column must not block the photo (it is a scratch card). */
+.split-content {
+  pointer-events: none;
+}
+.split-body {
+  pointer-events: auto;
+}
+
+/* ── Scratch to reveal ── */
+.scratch {
+  position: relative;
+}
+.scratch-foil {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+  transition: opacity 650ms ease;
+}
+/* Before hydration a CSS foil stands in for the canvas, so the photo never flashes. */
+.scratch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, #0f8a3c 0, #39b54a 40%, #a8d94f 65%, #22a045 100%);
+  opacity: 0;
+}
+.scratch[data-state="idle"]::after {
+  opacity: 1;
+}
+.scratch[data-state="revealing"] .scratch-foil {
+  opacity: 0;
+}
+.scratch[data-state="revealed"] .scratch-foil,
+.scratch[data-state="revealed"] .scratch-button,
+.scratch[data-state="revealing"] .scratch-button {
+  display: none;
+}
+.scratch-hint {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 9999px;
+  background: rgba(7, 22, 15, 0.55);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+  transform: translate(-50%, -50%);
+  transition: opacity 300ms ease;
+}
+.scratch:not([data-state="idle"]):not([data-state="covered"]) .scratch-hint {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scratch[data-state="covered"] .scratch-hint {
+    animation: hint-bob 2.4s ease-in-out infinite;
+  }
+  @keyframes hint-bob {
+    50% {
+      transform: translate(-50%, calc(-50% - 5px));
+    }
+  }
+}
+.scratch-button {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 1;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+.scratch-button:hover,
+.scratch-button:focus-visible {
+  opacity: 1;
+}
+/* In a split, keep the hint and button inside the visible (unfaded) part of the photo. */
+@media (min-width: 834px) {
+  .split .scratch-button {
+    bottom: 18%;
+    right: 6%;
+  }
+  .split[data-side="left"] .scratch-button,
+  .split-alt:nth-of-type(even) .scratch-button {
+    right: auto;
+    left: 6%;
+  }
+  .split .scratch-hint {
+    left: 62%;
+  }
+  .split[data-side="left"] .scratch-hint,
+  .split-alt:nth-of-type(even) .scratch-hint {
+    left: 38%;
+  }
+}
+
+/* ── Image reveal on hover (work tiles): colour blooms in and the photo eases closer ── */
+.hover-reveal .photo-img,
+.hover-reveal .ph-raised {
+  transition:
+    transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 500ms ease;
+}
+.hover-reveal .photo-img {
+  filter: saturate(0.35) brightness(1.04);
+}
+.hover-reveal:hover .photo-img,
+.hover-reveal:focus-visible .photo-img {
+  filter: none;
+  transform: scale(1.06);
+}
+.hover-reveal:hover .ph-raised {
+  transform: scale(1.04);
+  filter: hue-rotate(-12deg) saturate(1.3);
+}
+
+/* ── 3D flip card ── */
+.flip {
+  display: block;
+  width: 100%;
+  min-height: 15rem;
+  perspective: 1200px;
+  text-align: left;
+  border-radius: 28px;
+}
+.flip-inner {
+  position: relative;
+  display: grid;
+  min-height: inherit;
+  transform-style: preserve-3d;
+  transition: transform 700ms cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+.flip[data-flipped] .flip-inner {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  padding: 28px;
+  border-radius: 28px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-front {
+  background:
+    radial-gradient(80% 70% at 100% 0%, rgba(181, 228, 140, 0.55), transparent 60%),
+    var(--surface);
+}
+.flip:hover .flip-front {
+  background:
+    radial-gradient(90% 80% at 100% 0%, rgba(181, 228, 140, 0.8), transparent 60%),
+    var(--surface);
+}
+.flip-back {
+  background:
+    radial-gradient(90% 80% at 0% 100%, rgba(57, 181, 74, 0.35), transparent 60%),
+    var(--black);
+  transform: rotateY(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .flip-inner {
+    transition: none;
+  }
+}
+
+/* ── Cursor spotlight ── */
+.spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 400ms ease;
+  --mx: 50%;
+  --my: 50%;
+}
+
+/* ── Story timeline ── */
+.timeline-track {
+  position: relative;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 6px 0 4px 4px;
+}
+.timeline-track::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 8px;
+  top: 14px;
+  height: 2px;
+  background: linear-gradient(to right, var(--lime), var(--green) 50%, var(--hairline));
+  border-radius: 2px;
+}
+.timeline-node {
+  position: relative;
+  flex: 1 0 5.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 0 4px 0 0;
+  text-align: left;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 600;
+}
+.timeline-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: var(--canvas);
+  border: 2px solid var(--hairline);
+  transition:
+    transform 250ms ease,
+    background-color 250ms ease,
+    border-color 250ms ease;
+}
+.timeline-node.is-past .timeline-dot {
+  border-color: var(--primary);
+}
+.timeline-node[aria-selected="true"] {
+  color: var(--ink);
+}
+.timeline-node[aria-selected="true"] .timeline-dot {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: scale(1.2);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--primary) 16%, transparent);
+}
+.timeline-node:hover .timeline-dot {
+  border-color: var(--primary);
+}
+.timeline-panel {
+  margin-top: 18px;
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--canvas) 75%, transparent);
+  backdrop-filter: blur(6px);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .timeline-panel {
+    animation: reveal 450ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+  }
+}
+
+/* ── Polaroid board (draggable from 768px; a simple stack on phones) ── */
+.polaroid-board {
+  position: relative;
+  display: grid;
+  gap: 28px;
+}
+.polaroid {
+  background: #fff;
+  padding: 12px 12px 18px;
+  border-radius: 6px;
+  box-shadow:
+    0 1px 2px rgba(7, 22, 15, 0.08),
+    0 14px 34px -12px rgba(7, 22, 15, 0.28);
+}
+.polaroid-title {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.2;
+  color: var(--ink);
+}
+@media (min-width: 768px) {
+  .polaroid-board {
+    display: block;
+    height: 36rem;
+    border-radius: 28px;
+    background:
+      radial-gradient(60% 70% at 50% 40%, rgba(181, 228, 140, 0.35), transparent 70%),
+      var(--surface);
+  }
+  .polaroid {
+    position: absolute;
+    left: var(--left);
+    top: var(--top);
+    width: min(19rem, 28%);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    transform: translate(-50%, 0) translate(var(--dx), var(--dy)) rotate(var(--rot));
+    transition:
+      transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      box-shadow 300ms ease;
+  }
+  .polaroid:hover {
+    box-shadow:
+      0 1px 2px rgba(7, 22, 15, 0.08),
+      0 22px 44px -14px rgba(7, 22, 15, 0.35);
+  }
+  .polaroid[data-dragging] {
+    cursor: grabbing;
+    transition: box-shadow 300ms ease;
+    transform: translate(-50%, 0) translate(var(--dx), var(--dy)) rotate(0deg) scale(1.04);
+    box-shadow: 0 30px 60px -18px rgba(7, 22, 15, 0.45);
+  }
+  .polaroid-board > .btn {
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+/* ── Easter-egg toast ── */
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 34rem;
+  padding: 12px 18px;
+  border-radius: 9999px;
+  background: var(--black);
+  color: var(--on-black);
+  font-size: 15px;
+  line-height: 1.35;
+  box-shadow: 0 18px 40px -16px rgba(7, 22, 15, 0.6);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .toast {
+    animation: reveal 400ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+  }
+}
+
+/* ── Parallax (CSS scroll-driven; static where unsupported or with reduced motion) ── */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .aurora::before {
+      animation: parallax-glow linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+    @keyframes parallax-glow {
+      to {
+        transform: translateY(30%);
+      }
+    }
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) and (min-width: 834px) {
+    .split-media-inner {
+      animation: parallax-photo linear both;
+      animation-timeline: view();
+    }
+    @keyframes parallax-photo {
+      from {
+        transform: translateY(-5%) scale(1.1);
+      }
+      to {
+        transform: translateY(5%) scale(1.1);
+      }
     }
   }
 }
