@@ -1,4 +1,4 @@
-import { Geist_Mono, Inter } from "next/font/google";
+import { Geist_Mono, Inter, Playfair_Display } from "next/font/google";
 
 /**
  * Apple design system (docs/apple.DESIGN.md) specifies SF Pro Display / SF Pro Text.
@@ -14,6 +14,15 @@ const inter = Inter({
   display: "swap",
 });
 
+/** Editorial serif for large headings ("forest night" theme). Covers Vietnamese. */
+const serif = Playfair_Display({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  weight: ["500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-serif-face",
+  display: "swap",
+});
+
 /** Code only (inside articles). */
 const mono = Geist_Mono({
   subsets: ["latin", "latin-ext", "vietnamese"],
@@ -21,4 +30,4 @@ const mono = Geist_Mono({
   display: "swap",
 });
 
-export const fontVariables = [inter.variable, mono.variable].join(" ");
+export const fontVariables = [inter.variable, serif.variable, mono.variable].join(" ");

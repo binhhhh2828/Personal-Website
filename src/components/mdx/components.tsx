@@ -7,6 +7,7 @@ import { Container } from "@/components/ui/container";
 import type { MainLocale } from "@/config/i18n";
 import { getMainDict } from "@/config/main-i18n";
 import { mainPath } from "@/config/site";
+import { showDrafts } from "@/lib/drafts";
 
 function textOf(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") return String(node);
@@ -92,6 +93,7 @@ function Compare({
 
 /** <Placeholder>…</Placeholder> — marks content still to be written by the author. */
 function Placeholder({ children }: { children: ReactNode }) {
+  if (!showDrafts) return null;
   return (
     <div className="rounded-[11px] border border-dashed border-hairline px-5 py-4 text-[17px] leading-[1.47] text-muted">
       <span className="mr-2 font-semibold text-badge">[Placeholder]</span>
@@ -125,6 +127,7 @@ const makeChapter = (lang: MainLocale) =>
   image,
   imageAlt,
   album,
+  draft,
   children,
 }: {
   id?: string;
@@ -134,8 +137,11 @@ const makeChapter = (lang: MainLocale) =>
   imageAlt?: string;
   /** Gallery album slug — adds an "Open the album" link to /gallery#slug. */
   album?: string;
+  /** Not written yet: shown in development, hidden from visitors. */
+  draft?: boolean;
   children: ReactNode;
 }) {
+  if (draft && !showDrafts) return null;
   const body = (
     <>
       {eyebrow && <p className="t-eyebrow mb-2 text-badge">{eyebrow}</p>}
@@ -158,7 +164,7 @@ const makeChapter = (lang: MainLocale) =>
     );
   }
   return (
-    <Split alternate lang={lang} id={id} labelledBy={id ? `${id}-title` : undefined} image={image} alt={imageAlt ?? title} label={title}>
+    <Split alternate scratch={false} lang={lang} id={id} labelledBy={id ? `${id}-title` : undefined} image={image} alt={imageAlt ?? title} label={title}>
       {body}
     </Split>
   );

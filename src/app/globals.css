@@ -17,14 +17,15 @@
 
   --primary: #108239; /* CTAs, focus ring (white text ≈4.9:1) */
   --primary-hover: #0c7031;
-  --accent: #8ee05a; /* links on dark */
+  --accent: #c5f04a; /* links on dark — the lime accent */
   --link: #0f7d36; /* links on light (≈5:1) */
   --badge: #3a8518; /* eyebrow / badge text — lime green (≈4.6:1) */
   --leaf: #b5e48c; /* decorative glows */
+  --lime-glow: #c5f04a; /* signature accent on dark ("forest night") */
   --lime: #8cc63f; /* gradient start */
   --green: #22a045; /* gradient end */
 
-  --black: #06200f; /* deep-green dark bands */
+  --black: #061a10; /* deep forest night */
   --on-black: #f1f9ec;
   --on-black-muted: #a6bd9c;
 
@@ -49,6 +50,7 @@
   --color-on-black-muted: var(--on-black-muted);
   --color-nav: var(--nav);
   --color-leaf: var(--leaf);
+  --color-lime-glow: var(--lime-glow);
 
   /* CJK fallbacks come after the Latin faces, so Chinese text uses a native Chinese font. */
   --font-sans: "SF Pro Text", -apple-system, BlinkMacSystemFont, var(--font-inter-face), "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC",
@@ -56,6 +58,7 @@
   --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, var(--font-inter-face), "Segoe UI",
     "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif;
   --font-mono: var(--font-mono-face), ui-monospace, monospace;
+  --font-serif: var(--font-serif-face), "Songti SC", "Noto Serif SC", "SimSun", Georgia, serif;
 
   /* Radius scale: 0 (structure) · 8 · 11 · 28 (feature cards, images) · full (pills) */
   --radius-xs: 8px;
@@ -99,7 +102,7 @@
 @layer components {
   /* Hero: 34 → 44 → 52. Kept below Display XL so it sits beside a photo, not over the page. */
   .t-hero {
-    font-family: var(--font-display);
+    font-family: var(--font-serif);
     font-weight: 600;
     font-size: 34px;
     line-height: 1.12;
@@ -109,7 +112,7 @@
   }
   /* Page headline: Display XS 40 → Display SM 48 → Display MD 56 */
   .t-display {
-    font-family: var(--font-display);
+    font-family: var(--font-serif);
     font-weight: 600;
     font-size: 40px;
     line-height: 1.1;
@@ -119,7 +122,7 @@
   }
   /* Section heading: Heading XL 32 → Display XS 40 → Display SM 48 */
   .t-headline {
-    font-family: var(--font-display);
+    font-family: var(--font-serif);
     font-weight: 600;
     font-size: 32px;
     line-height: 1.13;
@@ -368,7 +371,7 @@
   margin-top: 1.05em;
 }
 .prose h2 {
-  font-family: var(--font-display);
+  font-family: var(--font-serif);
   font-weight: 600;
   font-size: 28px;
   line-height: 1.14;
@@ -959,7 +962,7 @@
 }
 .polaroid-title {
   display: block;
-  font-family: var(--font-display);
+  font-family: var(--font-serif);
   font-weight: 600;
   font-size: 19px;
   line-height: 1.2;
@@ -1057,17 +1060,6 @@
 }
 
 /* ── Private gallery ── */
-.vault-bar {
-  position: sticky;
-  top: 56px;
-  z-index: 15;
-  padding: 16px 20px;
-  border-radius: 22px;
-  background:
-    radial-gradient(70% 120% at 0% 0%, rgba(181, 228, 140, 0.45), transparent 60%),
-    color-mix(in srgb, var(--surface) 88%, transparent);
-  backdrop-filter: blur(14px) saturate(1.4);
-}
 .vault-input {
   min-height: 44px;
   flex: 1 1 14rem;
@@ -1090,59 +1082,7 @@
   opacity: 0.55;
   cursor: not-allowed;
 }
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-@media (min-width: 768px) {
-  .gallery-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
-  }
-}
-.gallery-item {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  overflow: hidden;
-  border-radius: 18px;
-  background: var(--surface);
-}
-.gallery-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-button.gallery-item:hover img {
-  transform: scale(1.05);
-}
-.gallery-locked {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 16px;
-  text-align: center;
-  color: var(--muted);
-  background:
-    radial-gradient(90% 80% at 80% 10%, rgba(181, 228, 140, 0.6), transparent 60%),
-    linear-gradient(160deg, #f1f9e9, #dfefd0);
-}
-.gallery-locked .t-title {
-  color: var(--ink);
-}
-.gallery-loading {
-  background: linear-gradient(100deg, var(--surface) 30%, var(--surface-raised) 50%, var(--surface) 70%);
-  background-size: 200% 100%;
-}
 @media (prefers-reduced-motion: no-preference) {
-  .gallery-loading {
-    animation: shimmer 1.2s linear infinite;
-  }
   @keyframes shimmer {
     to {
       background-position: -200% 0;
@@ -1229,4 +1169,314 @@ button.gallery-item:hover img {
   line-height: 1.35;
   font-weight: 600;
   color: var(--ink);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Forest night: dark feature sections, lime accent, film grain
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Serif headings are wide — tighten them a touch. */
+.t-hero,
+.t-display,
+.t-headline {
+  letter-spacing: -0.012em;
+  font-weight: 600;
+}
+.serif-italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Film grain over the whole page: a tiny SVG noise tile, barely visible. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* A dark section that fades into the white page below it (no hard edge). */
+.night {
+  position: relative;
+  color: var(--on-black);
+  background: linear-gradient(to bottom, var(--black) 0, var(--black) calc(100% - 12rem), #0f3019 calc(100% - 8.5rem), #3d7048 calc(100% - 5.5rem), #b9d8bd calc(100% - 2.5rem), var(--canvas) 100%);
+}
+/* …and one that fades in from white above and into the footer grey below. */
+.night-both {
+  position: relative;
+  color: var(--on-black);
+  background: linear-gradient(to bottom, var(--canvas) 0, #b9d8bd 2.5rem, #3d7048 5.5rem, #0f3019 8.5rem, var(--black) 12rem, var(--black) calc(100% - 12rem), #0f3019 calc(100% - 8.5rem), #3d7048 calc(100% - 5.5rem), #b9d8bd calc(100% - 2.5rem), var(--canvas) 100%);
+}
+.night .t-hero,
+.night .t-display,
+.night .t-headline,
+.night .t-title,
+.night-both .t-hero,
+.night-both .t-display,
+.night-both .t-headline,
+.night-both .t-title {
+  color: var(--on-black);
+}
+.night .text-muted,
+.night-both .text-muted {
+  color: var(--on-black-muted);
+}
+.night .text-badge,
+.night-both .text-badge {
+  color: var(--lime-glow);
+}
+.night .link,
+.night-both .link,
+.on-black .link {
+  color: var(--lime-glow);
+}
+/* Primary buttons on dark: lime with dark text (≈14:1). */
+.night .btn-primary,
+.night-both .btn-primary,
+.on-black .btn-primary {
+  background: var(--lime-glow);
+  color: #0b1f10;
+  font-weight: 600;
+}
+.night .btn-primary:hover,
+.night-both .btn-primary:hover,
+.on-black .btn-primary:hover {
+  background: #d4f76d;
+}
+.night .btn-outline,
+.night-both .btn-outline {
+  color: var(--on-black);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.night .btn-outline:hover,
+.night-both .btn-outline:hover {
+  background: var(--on-black);
+  color: #0b1f10;
+}
+.night .btn-chip,
+.night-both .btn-chip {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--on-black);
+}
+.night .text-fresh,
+.night-both .text-fresh {
+  background: linear-gradient(100deg, var(--lime-glow), #8cc63f 60%, #39b54a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+/* Hero glow on dark: lime and green clouds. */
+.night .aurora::before,
+.night.aurora::before {
+  background:
+    radial-gradient(38% 46% at 16% 38%, rgba(197, 240, 74, 0.16), transparent 70%),
+    radial-gradient(34% 42% at 50% 92%, rgba(57, 181, 74, 0.22), transparent 70%),
+    radial-gradient(28% 34% at 92% 10%, rgba(197, 240, 74, 0.12), transparent 70%);
+}
+/* Empty photo frames on dark: a soft green glow instead of a light card. */
+.night .ph-surface,
+.night-both .ph-surface {
+  background:
+    radial-gradient(60% 60% at 70% 40%, rgba(57, 181, 74, 0.35), transparent 70%),
+    radial-gradient(50% 50% at 30% 80%, rgba(197, 240, 74, 0.14), transparent 70%),
+    transparent;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Gallery as a dark photo album
+   ══════════════════════════════════════════════════════════════════════════ */
+.gallery-page {
+  background: linear-gradient(to bottom, var(--black) 0, var(--black) calc(100% - 12rem), #0f3019 calc(100% - 8.5rem), #3d7048 calc(100% - 5.5rem), #b9d8bd calc(100% - 2.5rem), var(--canvas) 100%);
+}
+.vault-panel {
+  padding: 18px 22px;
+  border-radius: 22px;
+  color: var(--on-black);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    radial-gradient(70% 140% at 0% 0%, rgba(197, 240, 74, 0.12), transparent 60%),
+    rgba(255, 255, 255, 0.04);
+}
+.gallery-page .vault-input {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--on-black);
+}
+.gallery-page .vault-input::placeholder {
+  color: var(--on-black-muted);
+}
+.gallery-page .vault-input:focus-visible {
+  outline-color: var(--lime-glow);
+}
+
+/* Album opening: text + cover photo */
+.album-head {
+  display: grid;
+  gap: 32px;
+  align-items: end;
+}
+@media (min-width: 900px) {
+  .album-head {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: 56px;
+  }
+  .album:nth-of-type(even) .album-text {
+    order: 2;
+  }
+}
+.album-number {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--lime-glow);
+  margin-bottom: 12px;
+}
+.album-cover {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #0d2618;
+  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.8);
+}
+.album-cover img {
+  width: 100%;
+  height: auto;
+  max-height: 34rem;
+  object-fit: cover;
+  transition:
+    transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 600ms ease;
+  filter: saturate(0.9);
+}
+.album-cover:hover img {
+  transform: scale(1.03);
+  filter: none;
+}
+
+/* Masonry wall — real proportions, never cropped */
+.masonry {
+  columns: 2;
+  column-gap: 12px;
+}
+@media (min-width: 768px) {
+  .masonry {
+    columns: 3;
+    column-gap: 16px;
+  }
+}
+@media (min-width: 1200px) {
+  .masonry {
+    columns: 4;
+  }
+}
+/* A short wall (a few previews + the locked pile) fills the width in three columns. */
+@media (min-width: 1200px) {
+  .masonry[data-few] {
+    columns: 3;
+  }
+}
+.masonry > li {
+  break-inside: avoid;
+  margin-bottom: 12px;
+}
+@media (min-width: 768px) {
+  .masonry > li {
+    margin-bottom: 16px;
+  }
+}
+.masonry-item {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #0d2618;
+}
+.masonry-item img {
+  width: 100%;
+  height: auto;
+  transition:
+    transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 300ms ease;
+}
+.masonry-item:hover img {
+  transform: scale(1.04);
+}
+.masonry-loading {
+  aspect-ratio: 4 / 5;
+  background: linear-gradient(100deg, #0d2618 30%, #15391f 50%, #0d2618 70%);
+  background-size: 200% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .masonry-loading {
+    animation: shimmer 1.2s linear infinite;
+  }
+}
+
+/* Locked stack: blurred copies of public previews, fanned like prints in a pile */
+.locked-stack {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #0d2618;
+  isolation: isolate;
+}
+.locked-layer {
+  position: absolute;
+  inset: 14%;
+  width: 72%;
+  height: 72%;
+  object-fit: cover;
+  border-radius: 10px;
+  filter: blur(14px) saturate(0.8) brightness(0.7);
+  transform: rotate(calc((var(--i) - 1) * 7deg)) translateY(calc(var(--i) * 6px));
+  transition: transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  z-index: -1;
+}
+.locked-stack:hover .locked-layer {
+  transform: rotate(calc((var(--i) - 1) * 11deg)) translateY(calc(var(--i) * 10px - 6px));
+}
+.locked-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  text-align: center;
+  color: var(--on-black);
+}
+.locked-label .t-body-sm {
+  max-width: 18ch;
+  color: var(--on-black-muted);
+}
+.locked-stack:hover .locked-label {
+  color: var(--lime-glow);
+}
+
+/* Lightbox: blurred backdrop, album title, swipe on touch */
+.lightbox::backdrop {
+  background: rgba(3, 12, 7, 0.86);
+  backdrop-filter: blur(18px);
+}
+.lightbox[open] {
+  flex-direction: column;
+  gap: 18px;
+  touch-action: pan-y;
+}
+.lightbox-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--on-black-muted);
+}
+.lightbox-bar {
+  background: rgba(255, 255, 255, 0.1);
 }

@@ -2,6 +2,12 @@ import fs from "node:fs";
 import path from "node:path";
 import Image from "next/image";
 import { cx } from "@/lib/format";
+import { showDrafts } from "@/lib/drafts";
+
+/** Whether a public image is there yet (remote URLs count as present). */
+export function imageExists(src: string) {
+  return /^https?:\/\//.test(src) || fs.existsSync(path.join(process.cwd(), "public", src));
+}
 
 /**
  * Photo frame. Pass the public path where the image *will* live, e.g.
@@ -33,14 +39,20 @@ export function Photo({
   /** Frame background (soft green gradients, globals.css .ph-*): "surface" on white, "raised" inside tiles, "dark" on dark bands. */
   tone?: "surface" | "raised" | "dark";
 }) {
-  const isRemote = /^https?:\/\//.test(src);
-  const exists = isRemote || fs.existsSync(path.join(process.cwd(), "public", src));
+  const exists = imageExists(src);
   const frame = cx("relative w-full overflow-hidden", tone === "dark" ? "ph-dark" : tone === "raised" ? "ph-raised" : "ph-surface", rounded && "rounded-[28px]", className);
 
   if (!exists) {
     return (
-      <div className={frame} style={ratio === "auto" ? undefined : { aspectRatio: ratio }} role="img" aria-label={`${alt} (photo coming soon)`}>
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-6 text-center">
+      <div
+        className={frame}
+        style={ratio === "auto" ? undefined : { aspectRatio: ratio }}
+        role={showDrafts ? "img" : undefined}
+        aria-label={showDrafts ? `${alt} (photo coming soon)` : undefined}
+        aria-hidden={showDrafts ? undefined : true}
+      >
+        {/* Visitors see only the soft frame; the upload hint is for you, in development. */}
+        <div className={cx("absolute inset-0 flex-col items-center justify-center gap-2 p-6 text-center", showDrafts ? "flex" : "hidden")}>
           <svg aria-hidden width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-faint">
             <rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" strokeWidth="1.5" />
             <circle cx="9" cy="10" r="1.75" stroke="currentColor" strokeWidth="1.5" />

@@ -16,15 +16,16 @@ const vi = {
   footer: { personal: "Cá nhân", contact: "Liên hệ", elsewhere: "Mạng xã hội" },
 
   home: {
-    readStory: "Đọc câu chuyện của tôi",
+    readStory: "Đọc câu chuyện của mình",
     seeWork: "Xem các dự án",
+    seeAlbum: "Xem album ảnh",
     aboutEyebrow: "Giới thiệu",
     readFullStory: "Đọc toàn bộ câu chuyện",
     worksEyebrow: "Dự án tiêu biểu",
     worksTitle: "Những thứ mình đã làm và học.",
     allProjects: "Tất cả dự án",
     explorationsEyebrow: "Khám phá",
-    explorationsTitle: "Những điều tôi cứ quay lại mãi.",
+    explorationsTitle: "Những điều mình cứ quay lại mãi.",
     ieltsEyebrow: "Một chuyến khám phá ngôn ngữ",
     visitLab: "Ghé phòng lab",
     ieltsTagline: "Học cách tư duy, không chỉ học cách viết.",
@@ -61,9 +62,9 @@ const vi = {
   about: {
     chapters: "Các chương",
     thanksTitle: "Cảm ơn bạn đã đọc.",
-    thanksBody: "Xem những gì tôi đang làm, hoặc gửi một lời chào.",
+    thanksBody: "Xem những gì mình đang làm, hoặc gửi một lời chào.",
     seeWork: "Xem dự án",
-    getInTouch: "Liên hệ với tôi",
+    getInTouch: "Liên hệ với mình",
   },
 
   pages: {
@@ -125,6 +126,7 @@ const en: typeof vi = {
   home: {
     readStory: "Read my story",
     seeWork: "See my work",
+    seeAlbum: "Browse the photo album",
     aboutEyebrow: "About",
     readFullStory: "Read the full story",
     worksEyebrow: "Selected works",
@@ -231,6 +233,7 @@ const zh: typeof vi = {
   home: {
     readStory: "读我的故事",
     seeWork: "看看我的作品",
+    seeAlbum: "翻翻相册",
     aboutEyebrow: "关于我",
     readFullStory: "阅读完整故事",
     worksEyebrow: "精选作品",

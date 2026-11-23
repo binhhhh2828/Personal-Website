@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cx } from "@/lib/format";
 import { Container } from "./container";
-import { Photo } from "./photo";
+import { Photo, imageExists } from "./photo";
 import { ScratchReveal } from "@/components/effects/scratch-reveal";
 import type { MainLocale } from "@/config/i18n";
 
@@ -69,7 +69,13 @@ export function Split({
     >
       <div className="split-media">
         <div className="split-media-inner">
-          {scratch ? <ScratchReveal id={image} lang={lang} className="h-full">{photo}</ScratchReveal> : photo}
+          {scratch && imageExists(image) ? (
+            <ScratchReveal id={image} lang={lang} className="h-full">
+              {photo}
+            </ScratchReveal>
+          ) : (
+            photo
+          )}
         </div>
       </div>
       <Container className="split-content relative">

@@ -5,7 +5,8 @@ import { ieltsLocaleFor, type MainLocale } from "@/config/i18n";
 import { getMainDict } from "@/config/main-i18n";
 import { getProfile } from "@/config/profile";
 import { Container } from "@/components/ui/container";
-import { Photo } from "@/components/ui/photo";
+import { Photo, imageExists } from "@/components/ui/photo";
+import { isPlaceholder, showDrafts } from "@/lib/drafts";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Split } from "@/components/ui/split";
 import { JournalList } from "@/components/article/journal-list";
@@ -19,10 +20,15 @@ import { getStoryChapters } from "@/lib/content/chapters";
 import { getJournal } from "@/lib/content/journal";
 import { mainMetadata } from "@/lib/seo";
 
-export async function generateMetadata({ params }: PageProps<"/[lang]">): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<"/[lang]">): Promise<Metadata> {
   const lang = (await params).lang as MainLocale;
   return {
-    ...mainMetadata(lang, { description: getMainDict(lang).siteDescription, path: "/" }),
+    ...mainMetadata(lang, {
+      description: getMainDict(lang).siteDescription,
+      path: "/",
+    }),
     title: { absolute: site.name },
   };
 }
@@ -42,7 +48,10 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
   const profile = getProfile(lang);
   const href = (path: string) => mainPath(lang, path);
   const chapters = getStoryChapters(lang);
-  const works = profile.works.filter((w) => w.featured).slice(0, 3);
+  // Placeholder works stay out of sight for visitors until real ones are added.
+  const works = profile.works
+    .filter((w) => w.featured && (showDrafts || !isPlaceholder(w.title)))
+    .slice(0, 3);
   const journal = getJournal().slice(0, 3);
 
   return (
@@ -56,7 +65,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
         lang={lang}
         priority
         labelledBy="hero"
-        className="aurora"
+        className="night aurora"
       >
         <div className="reveal">
           <p className="t-eyebrow text-badge">
@@ -65,21 +74,37 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
           <h1 id="hero" className="t-hero mt-3">
             {profile.headline}
           </h1>
-          <p className="mt-5 max-w-[34ch] text-[19px] leading-[1.42] text-muted">{profile.intro}</p>
+          <p className="mt-5 max-w-[34ch] text-[19px] leading-[1.42] text-muted">
+            {profile.intro}
+          </p>
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
             <Link href={href("/about")} className="btn btn-primary">
               {h.readStory}
             </Link>
-            <a href="#works" className="link link-more">
-              {h.seeWork}
-            </a>
+            {works.length > 0 ? (
+              <a href="#works" className="link link-more">
+                {h.seeWork}
+              </a>
+            ) : (
+              <Link href={href("/gallery")} className="link link-more">
+                {h.seeAlbum}
+              </Link>
+            )}
           </div>
         </div>
       </Split>
 
       {/* 2 · About — the photo swaps sides; the grey band melts in and out */}
       <div className="band-soft">
-        <Split side="left" lang={lang} image="/images/home/about.jpg" alt={h.aboutPhotoAlt} label={h.aboutEyebrow} labelledBy="about">
+        <Split
+          side="left"
+          scratch={false}
+          lang={lang}
+          image="/images/home/about.jpg"
+          alt={h.aboutPhotoAlt}
+          label={h.aboutEyebrow}
+          labelledBy="about"
+        >
           <p className="t-eyebrow text-badge">{h.aboutEyebrow}</p>
           <h2 id="about" className="t-headline mt-2">
             {profile.role}
@@ -107,67 +132,85 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
         </Split>
       </div>
 
-      {/* 3 · Selected Works */}
-      <section id="works" aria-labelledby="works-title" className="py-16 md:py-24">
-        <Container>
-          <SectionHeading
-            id="works-title"
-            eyebrow={<TextScramble text={h.worksEyebrow} />}
-            href={href("/projects")}
-            linkLabel={h.allProjects}
-            className="reveal-scroll"
-          >
-            {h.worksTitle}
-          </SectionHeading>
-          <ul className="reveal-scroll mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {works.map((w) => {
-              const inner = (
-                <>
-                  <Photo
-                    src={w.image}
-                    alt={w.title}
-                    ratio="4/3"
-                    rounded={false}
-                    tone="raised"
-                    label={w.title}
-                    sizes="(min-width: 1068px) 480px, (min-width: 768px) 50vw, 100vw"
-                  />
-                  <div className="p-6 md:p-7">
-                    <p className="t-caption text-badge">
-                      {w.kind === "project" ? h.project : h.researchKind}
-                      <span className="text-muted"> · {w.year}</span>
-                    </p>
-                    <h3 className="t-title mt-2">{w.title}</h3>
-                    <p className="mt-2 text-muted">{w.summary}</p>
-                  </div>
-                </>
-              );
-              return (
-                <li key={w.title}>
-                  {w.href ? (
-                    <a href={w.href} className="tile tile-link hover-reveal block h-full">
-                      {inner}
-                    </a>
-                  ) : (
-                    <div className="tile hover-reveal h-full">{inner}</div>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </Container>
-      </section>
+      {/* 3 · Selected Works — hidden until there is at least one real work */}
+      {works.length > 0 && (
+        <section
+          id="works"
+          aria-labelledby="works-title"
+          className="py-16 md:py-24"
+        >
+          <Container>
+            <SectionHeading
+              id="works-title"
+              eyebrow={h.worksEyebrow}
+              href={href("/projects")}
+              linkLabel={h.allProjects}
+              className="reveal-scroll"
+            >
+              {h.worksTitle}
+            </SectionHeading>
+            <ul className="reveal-scroll mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {works.map((w) => {
+                const inner = (
+                  <>
+                    <Photo
+                      src={w.image}
+                      alt={w.title}
+                      ratio="4/3"
+                      rounded={false}
+                      tone="raised"
+                      label={w.title}
+                      sizes="(min-width: 1068px) 480px, (min-width: 768px) 50vw, 100vw"
+                    />
+                    <div className="p-6 md:p-7">
+                      <p className="t-caption text-badge">
+                        {w.kind === "project" ? h.project : h.researchKind}
+                        <span className="text-muted"> · {w.year}</span>
+                      </p>
+                      <h3 className="t-title mt-2">{w.title}</h3>
+                      <p className="mt-2 text-muted">{w.summary}</p>
+                    </div>
+                  </>
+                );
+                return (
+                  <li key={w.title}>
+                    {w.href ? (
+                      <a
+                        href={w.href}
+                        className="tile tile-link hover-reveal block h-full"
+                      >
+                        {inner}
+                      </a>
+                    ) : (
+                      <div className="tile hover-reveal h-full">{inner}</div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </Container>
+        </section>
+      )}
 
       {/* 4 · Explorations */}
       <section aria-labelledby="explorations" className="pb-16 md:pb-24">
         <Container>
-          <SectionHeading id="explorations" eyebrow={<TextScramble text={h.explorationsEyebrow} />} className="reveal-scroll">
+          <SectionHeading
+            id="explorations"
+            eyebrow={h.explorationsEyebrow}
+            className="reveal-scroll"
+          >
             {h.explorationsTitle}
           </SectionHeading>
           <ul className="reveal-scroll mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {profile.explorations.map((x, i) => (
               <li key={x.title}>
-                <FlipCard index={i} title={x.title} note={x.note} hint={t.effects.flip} />
+                <FlipCard
+                  index={i}
+                  title={x.title}
+                  note={x.note}
+                  hint={t.effects.flip}
+                />
               </li>
             ))}
           </ul>
@@ -181,7 +224,9 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
             <p className="t-eyebrow text-on-black-muted">{h.ieltsEyebrow}</p>
             <p className="t-display mx-auto mt-2">{ielts.name}</p>
             <p className="t-lede mx-auto mt-4 max-w-[30ch]">{h.ieltsTagline}</p>
-            <span className="link link-more mt-6 inline-block">{h.visitLab}</span>
+            <span className="link link-more mt-6 inline-block">
+              {h.visitLab}
+            </span>
           </a>
         </Container>
       </section>
@@ -191,7 +236,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
         <Container>
           <SectionHeading
             id="journal"
-            eyebrow={<TextScramble text={h.journalEyebrow} />}
+            eyebrow={h.journalEyebrow}
             href={href("/journal")}
             linkLabel={h.allNotes}
             className="reveal-scroll"
@@ -199,7 +244,11 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
             {h.journalTitle}
           </SectionHeading>
           <div className="reveal-scroll mt-10">
-            <JournalList entries={journal} emptyText={h.journalEmpty} lang={lang} />
+            <JournalList
+              entries={journal}
+              emptyText={h.journalEmpty}
+              lang={lang}
+            />
           </div>
         </Container>
       </section>
@@ -209,7 +258,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
         <Container>
           <SectionHeading
             id="beyond"
-            eyebrow={<TextScramble text={h.beyondEyebrow} />}
+            eyebrow={h.beyondEyebrow}
             href={href("/about#leisure")}
             linkLabel={h.moreInStory}
             className="reveal-scroll"
@@ -225,12 +274,36 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
               tidyLabel={h.tidy}
               cards={profile.beyondWork.map((b) => (
                 <figure key={b.image}>
-                  <ScratchReveal id={b.image} lang={lang} hint={t.effects.scratchShort}>
-                    <Photo src={b.image} alt={b.title} ratio="1/1" rounded={false} label={b.title} sizes="320px" />
-                  </ScratchReveal>
+                  {imageExists(b.image) ? (
+                    <ScratchReveal
+                      id={b.image}
+                      lang={lang}
+                      hint={t.effects.scratchShort}
+                    >
+                      <Photo
+                        src={b.image}
+                        alt={b.title}
+                        ratio="1/1"
+                        rounded={false}
+                        label={b.title}
+                        sizes="320px"
+                      />
+                    </ScratchReveal>
+                  ) : (
+                    <Photo
+                      src={b.image}
+                      alt={b.title}
+                      ratio="1/1"
+                      rounded={false}
+                      label={b.title}
+                      sizes="320px"
+                    />
+                  )}
                   <figcaption className="px-1 pt-4">
                     <span className="polaroid-title">{b.title}</span>
-                    <span className="mt-1 block text-[14px] leading-[1.4] text-muted">{b.note}</span>
+                    <span className="mt-1 block text-[14px] leading-[1.4] text-muted">
+                      {b.note}
+                    </span>
                   </figcaption>
                 </figure>
               ))}
@@ -240,21 +313,35 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
       </section>
 
       {/* 7 · Contact — flows straight into the footer's grey */}
-      <section id="contact" aria-labelledby="contact-title" className="relative pt-8 pb-4 md:pt-16">
-        <Spotlight color="rgba(57, 181, 74, 0.28)" size={640} />
+      <section
+        id="contact"
+        aria-labelledby="contact-title"
+        className="night-both relative pt-40 pb-36 md:pt-52 md:pb-44"
+      >
+        <Spotlight color="rgba(197, 240, 74, 0.14)" size={640} />
         <Container className="reveal-scroll text-center">
           <p className="t-eyebrow text-badge">{h.contactEyebrow}</p>
-          <h2 id="contact-title" className="t-display mx-auto mt-2 w-fit text-fresh">
+          <h2
+            id="contact-title"
+            className="t-display mx-auto mt-2 w-fit text-fresh"
+          >
             {h.contactTitle}
           </h2>
-          <p className="t-lede mx-auto mt-5 max-w-[34ch] text-muted">{profile.contact.note}</p>
+          <p className="t-lede mx-auto mt-5 max-w-[34ch] text-muted">
+            {profile.contact.note}
+          </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             {profile.contact.email ? (
-              <a href={`mailto:${profile.contact.email}`} className="btn btn-primary">
+              <a
+                href={`mailto:${profile.contact.email}`}
+                className="btn btn-primary"
+              >
                 {profile.contact.email}
               </a>
             ) : (
-              <span className="btn btn-chip">{h.emailMissing}</span>
+              showDrafts && (
+                <span className="btn btn-chip">{h.emailMissing}</span>
+              )
             )}
             {profile.contact.links.map((l) => (
               <a key={l.href} href={l.href} className="btn btn-outline">

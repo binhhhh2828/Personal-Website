@@ -1,6 +1,11 @@
 import { ieltsLocaleFor, type Locale, type MainLocale } from "./i18n";
 import { ieltsHref, ieltsHrefFromMain, mainHrefFromIelts, mainPath } from "./site";
 import { getMainDict } from "./main-i18n";
+import { getProfile } from "./profile";
+import { isPlaceholder, showDrafts } from "@/lib/drafts";
+
+/** Projects appear once at least one real (non-placeholder) work exists. */
+const hasWorks = (lang: MainLocale) => showDrafts || getProfile(lang).works.some((w) => !isPlaceholder(w.title));
 import { sections, type SectionId } from "./content";
 
 export type NavItem = {
@@ -25,7 +30,7 @@ export function globalNav(from: From, lang: MainLocale = "vi"): NavItem[] {
       : { label: "", href: mainHrefFromIelts(mainPath(lang, path)), crossSite: true };
   return [
     { ...main("/about"), label: t.about },
-    { ...main("/projects"), label: t.projects },
+    ...(hasWorks(lang) ? [{ ...main("/projects"), label: t.projects }] : []),
     { ...main("/journal"), label: t.journal },
     { ...main("/gallery"), label: t.gallery },
     from === "main"
@@ -60,7 +65,7 @@ export function footerColumns(from: From, lang: MainLocale = "vi") {
       crossSite: from === "ielts",
       links: [
         { label: t.nav.about, href: m("/about") },
-        { label: t.nav.projects, href: m("/projects") },
+        ...(hasWorks(lang) ? [{ label: t.nav.projects, href: m("/projects") }] : []),
         { label: t.nav.journal, href: m("/journal") },
         { label: t.nav.gallery, href: m("/gallery") },
         { label: t.footer.contact, href: m("/#contact") },

@@ -1,6 +1,7 @@
 import "server-only";
 import { getPageContent } from "./index";
 import type { MainLocale } from "@/config/i18n";
+import { showDrafts } from "@/lib/drafts";
 
 export type StoryChapter = { id: string; title: string; eyebrow?: string; summary?: string };
 
@@ -16,6 +17,7 @@ export function getStoryChapters(lang: MainLocale): StoryChapter[] {
   for (const m of page.body.matchAll(/<Chapter\b([^>]*)>/g)) {
     const id = attr(m[1], "id");
     const title = attr(m[1], "title");
+    if (/(?:^|\s)draft(?:[\s=]|$)/.test(m[1]) && !showDrafts) continue;
     if (id && title) chapters.push({ id, title, eyebrow: attr(m[1], "eyebrow"), summary: attr(m[1], "summary") });
   }
   return chapters;
