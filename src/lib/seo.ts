@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { localeLabels, locales, type Locale } from "@/config/i18n";
-import { ielts, ieltsAbsolute, mainAbsolute, site } from "@/config/site";
+import { ielts, ieltsAbsolute, mainAbsolute, mainPath, site } from "@/config/site";
 
 /**
  * Metadata builders. Canonical URLs are always absolute and always point to the
@@ -20,19 +20,35 @@ type PageMeta = {
   noindex?: boolean;
 };
 
-export function mainMetadata(meta: PageMeta): Metadata {
-  const url = mainAbsolute(meta.path);
+/**
+ * Personal-site metadata. `path` is the language-neutral path ("/about"); the canonical URL
+ * and hreflang alternates are built for both languages (vi at the root, en under /en).
+ * Set `bilingual: false` for pages that exist in one language only (journal entries).
+ */
+export function mainMetadata(lang: Locale, meta: PageMeta & { bilingual?: boolean }): Metadata {
+  const url = mainAbsolute(mainPath(lang, meta.path));
+  const bilingual = meta.bilingual ?? true;
   return {
     title: meta.title,
     description: meta.description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      ...(bilingual && {
+        languages: {
+          vi: mainAbsolute(mainPath("vi", meta.path)),
+          en: mainAbsolute(mainPath("en", meta.path)),
+          "x-default": mainAbsolute(mainPath("vi", meta.path)),
+        },
+      }),
+    },
     openGraph: {
-      type: "website",
+      type: meta.type ?? "website",
       url,
       siteName: site.name,
       title: meta.title ?? site.name,
       description: meta.description,
-      locale: "en_US",
+      locale: localeLabels[lang].ogLocale,
+      ...(bilingual && { alternateLocale: locales.filter((l) => l !== lang).map((l) => localeLabels[l].ogLocale) }),
       ...(meta.image && { images: [meta.image] }),
     },
     twitter: { card: meta.image ? "summary_large_image" : "summary" },

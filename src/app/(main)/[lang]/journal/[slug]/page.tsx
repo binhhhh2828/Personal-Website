@@ -12,27 +12,34 @@ import { getJournal, getJournalAdjacent, getJournalEntry } from "@/lib/content/j
 import { formatDate, isoDate } from "@/lib/format";
 import { mainMetadata } from "@/lib/seo";
 import { mainAbsolute } from "@/config/site";
+import type { Locale } from "@/config/i18n";
+import { getMainDict } from "@/config/main-i18n";
 
 export const dynamicParams = false;
 
-export function generateStaticParams() {
-  return getJournal().map((e) => ({ slug: e.slug }));
+/** Each note is published only in the language it is written in. */
+export function generateStaticParams({ params }: { params: { lang: string } }) {
+  return getJournal()
+    .filter((e) => e.language === params.lang)
+    .map((e) => ({ slug: e.slug }));
 }
 
-type Props = PageProps<"/journal/[slug]">;
+type Props = PageProps<"/[lang]/journal/[slug]">;
 
 async function load(params: Props["params"]) {
-  const entry = getJournalEntry((await params).slug);
-  if (!entry) notFound();
+  const { lang, slug } = await params;
+  const entry = getJournalEntry(slug);
+  if (!entry || entry.language !== lang) notFound();
   return entry;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const e = await load(params);
-  return mainMetadata({
+  return mainMetadata(e.language, {
+    bilingual: false,
     title: e.title,
     description: e.description,
-    path: e.path,
+    path: `/journal/${e.slug}`,
     image: e.coverImage,
     noindex: e.draft,
   });
@@ -42,6 +49,8 @@ export default async function JournalEntryPage({ params }: Props) {
   const entry = await load(params);
   const { previous, next } = getJournalAdjacent(entry);
   const headings = extractHeadings(entry.body);
+  const lang: Locale = entry.language;
+  const t = getMainDict(lang).journal;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -64,15 +73,15 @@ export default async function JournalEntryPage({ params }: Props) {
       <header>
         <Container className="reveal pt-14 pb-10 text-center md:pt-20 md:pb-14">
           <p className="t-body-sm text-muted">
-            <time dateTime={isoDate(entry.publishedAt)}>{formatDate(entry.publishedAt, "en")}</time>
+            <time dateTime={isoDate(entry.publishedAt)}>{formatDate(entry.publishedAt, lang)}</time>
             <span aria-hidden> · </span>
-            {entry.readingMinutes} min read
+            {entry.readingMinutes} {t.minRead}
           </p>
           <h1 className="t-display mx-auto mt-3 max-w-[20ch]">{entry.title}</h1>
           <p className="t-lede mx-auto mt-5 max-w-[36ch] text-muted">{entry.description}</p>
           {entry.draft && (
             <p className="t-caption mt-6 inline-block rounded-full bg-surface px-3 py-1 text-muted">
-              Draft — visible in development only
+              {t.draft}
             </p>
           )}
         </Container>
@@ -80,14 +89,14 @@ export default async function JournalEntryPage({ params }: Props) {
 
       {entry.coverImage && (
         <Container className="mb-12 md:mb-16">
-          <Photo src={entry.coverImage} alt="" ratio="16/9" label="Cover image" priority />
+          <Photo src={entry.coverImage} alt="" ratio="16/9" label={t.cover} priority />
         </Container>
       )}
 
       <Container className="grid gap-10 md:grid-cols-[1fr_13rem] md:gap-14">
         <aside className="order-first md:order-last">
           <div className="md:sticky md:top-20">
-            <TableOfContents headings={headings} label="On this page" />
+            <TableOfContents headings={headings} label={t.onThisPage} />
           </div>
         </aside>
         <div className="min-w-0">
@@ -104,7 +113,7 @@ export default async function JournalEntryPage({ params }: Props) {
         <PrevNext
           previous={previous && { href: previous.path, title: previous.title }}
           next={next && { href: next.path, title: next.title }}
-          labels={{ previous: "Previous", next: "Next" }}
+          labels={{ previous: t.previous, next: t.next }}
         />
       </Container>
     </article>

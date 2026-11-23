@@ -217,9 +217,9 @@ export type PageContent = { title: string; description: string; body: string };
  * Returns undefined if the file does not exist.
  */
 export function getPageContent(siteKey: "ielts", lang: Locale, name: string): PageContent | undefined;
-export function getPageContent(siteKey: "main", lang: null, name: string): PageContent | undefined;
-export function getPageContent(siteKey: "ielts" | "main", lang: Locale | null, name: string): PageContent | undefined {
-  const file = path.join(PAGES_ROOT, siteKey, ...(lang ? [lang] : []), `${name}.mdx`);
+export function getPageContent(siteKey: "main", lang: Locale, name: string): PageContent | undefined;
+export function getPageContent(siteKey: "ielts" | "main", lang: Locale, name: string): PageContent | undefined {
+  const file = path.join(PAGES_ROOT, siteKey, lang, `${name}.mdx`);
   if (!fs.existsSync(file)) return undefined;
   const { data, content } = matter(fs.readFileSync(file, "utf8"));
   return { title: String(data.title ?? ""), description: String(data.description ?? ""), body: content };

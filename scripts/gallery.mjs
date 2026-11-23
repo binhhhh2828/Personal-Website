@@ -150,7 +150,7 @@ async function main() {
     const list = encrypt(key, Buffer.from(JSON.stringify(photos)));
     albums.push({
       slug,
-      title: meta.title ?? dir,
+      title: meta.title ?? dir, // string, or { "vi": "…", "en": "…" }
       note: meta.note ?? "",
       order: meta.order ?? 999,
       total: files.length,
@@ -160,7 +160,7 @@ async function main() {
     console.log(`✓ ${slug}: ${files.length} photos (${previews.length} public previews)`);
   }
 
-  albums.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+  albums.sort((a, b) => a.order - b.order || a.slug.localeCompare(b.slug));
   for (const a of albums) delete a.order;
   const manifest = {
     version: 1,

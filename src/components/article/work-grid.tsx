@@ -2,9 +2,9 @@ import type { Work } from "@/config/profile";
 import { Photo } from "@/components/ui/photo";
 
 /** Works as photo tiles: image frame on top, meta, title, summary, tag chips. */
-export function WorkGrid({ works }: { works: Work[] }) {
+export function WorkGrid({ works, emptyText }: { works: Work[]; emptyText: string }) {
   if (works.length === 0) {
-    return <p className="tile px-6 py-10 text-center text-muted">Coming soon.</p>;
+    return <p className="tile px-6 py-10 text-center text-muted">{emptyText}</p>;
   }
   return (
     <ul className="grid gap-5 md:grid-cols-2">

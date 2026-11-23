@@ -50,6 +50,18 @@ export function ieltsAbsolute(path = "/") {
   return `${ielts.url}${p === "/" ? "" : p}` || ielts.url;
 }
 
+/**
+ * Path on the personal site in a given language. Vietnamese (the default) lives at the
+ * root — "/about" — and English under "/en" — "/en/about". Keeps any "#hash".
+ */
+export function mainPath(lang: "vi" | "en", path = "/") {
+  const p = path.startsWith("/") ? path : `/${path}`;
+  if (lang === "vi") return p;
+  const [pathname, hash] = p.split("#");
+  const localized = pathname === "/" ? "/en" : `/en${pathname}`;
+  return hash !== undefined ? `${localized}#${hash}` : localized;
+}
+
 /** Absolute main-site URL. */
 export function mainAbsolute(path = "/") {
   const p = path.startsWith("/") ? path : `/${path}`;

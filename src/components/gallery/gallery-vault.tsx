@@ -3,6 +3,12 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { openList, openPhoto, unlock, type Kdf, type Sealed, type VaultPhoto } from "@/lib/gallery-crypto";
 import { confetti } from "@/lib/confetti";
+import type { Locale } from "@/config/i18n";
+import { getMainDict, type MainDict } from "@/config/main-i18n";
+
+/** Album text may be one string or one per language. */
+type Localized = string | Partial<Record<Locale, string>>;
+const pick = (v: Localized, lang: Locale) => (typeof v === "string" ? v : (v[lang] ?? v.vi ?? v.en ?? ""));
 
 export type GalleryManifest = {
   version: 1;
@@ -10,8 +16,8 @@ export type GalleryManifest = {
   check: Sealed | null;
   albums: {
     slug: string;
-    title: string;
-    note: string;
+    title: Localized;
+    note: Localized;
     total: number;
     previews: { src: string; w: number; h: number }[];
     vault: Sealed;
@@ -29,7 +35,8 @@ const LockIcon = ({ size = 20 }: { size?: number }) => (
  * Private gallery. Previews are public; everything else is AES-encrypted on the server and
  * decrypted here, in memory, once the right password is entered (see scripts/gallery.mjs).
  */
-export function GalleryVault({ manifest }: { manifest: GalleryManifest }) {
+export function GalleryVault({ manifest, lang = "vi" }: { manifest: GalleryManifest; lang?: Locale }) {
+  const t = getMainDict(lang).gallery;
   const [key, setKey] = useState<CryptoKey | null>(null);
   const [status, setStatus] = useState<"idle" | "working" | "wrong">("idle");
   const [cooldown, setCooldown] = useState(0);
@@ -71,32 +78,32 @@ export function GalleryVault({ manifest }: { manifest: GalleryManifest }) {
           {key ? (
             <div className="flex flex-wrap items-center justify-between gap-4">
               <p className="flex items-center gap-2 font-semibold text-ink">
-                <span className="text-primary">✓</span> Unlocked — full albums are open on this tab.
+                <span className="text-primary">✓</span> {t.unlocked}
               </p>
               <button type="button" className="btn btn-chip" onClick={() => setKey(null)}>
-                <LockIcon size={16} /> Lock again
+                <LockIcon size={16} /> {t.lockAgain}
               </button>
             </div>
           ) : (
             <form onSubmit={onSubmit} className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <label htmlFor="vault-password" className="flex items-center gap-2 font-semibold text-ink sm:shrink-0">
-                <LockIcon /> Full albums are locked
+                <LockIcon /> {t.locked}
               </label>
               <input
                 ref={inputRef}
                 id="vault-password"
                 type="password"
                 autoComplete="off"
-                placeholder="Password"
+                placeholder={t.password}
                 aria-invalid={status === "wrong" || undefined}
                 aria-describedby="vault-status"
                 className="vault-input"
               />
               <button type="submit" className="btn btn-primary" disabled={status === "working" || cooldown > 0}>
-                {status === "working" ? "Unlocking…" : cooldown > 0 ? `Wait ${cooldown}s` : "Unlock"}
+                {status === "working" ? t.unlocking : cooldown > 0 ? t.wait(cooldown) : t.unlock}
               </button>
               <p id="vault-status" role="status" className="t-body-sm text-muted sm:ml-2">
-                {status === "wrong" ? "That’s not it. Try again." : null}
+                {status === "wrong" ? t.wrong : null}
               </p>
             </form>
           )}
@@ -104,11 +111,11 @@ export function GalleryVault({ manifest }: { manifest: GalleryManifest }) {
       )}
 
       {manifest.albums.length === 0 ? (
-        <p className="tile px-7 py-14 text-center text-muted">Albums are on their way.</p>
+        <p className="tile px-7 py-14 text-center text-muted">{t.empty}</p>
       ) : (
         <div className="mt-12 space-y-20">
           {manifest.albums.map((album) => (
-            <Album key={album.slug} album={album} cryptoKey={key} onLockedClick={() => inputRef.current?.focus()} />
+            <Album key={album.slug} album={album} cryptoKey={key} lang={lang} t={t} onLockedClick={() => inputRef.current?.focus()} />
           ))}
         </div>
       )}
@@ -119,12 +126,18 @@ export function GalleryVault({ manifest }: { manifest: GalleryManifest }) {
 function Album({
   album,
   cryptoKey,
+  lang,
+  t,
   onLockedClick,
 }: {
   album: GalleryManifest["albums"][number];
   cryptoKey: CryptoKey | null;
+  lang: Locale;
+  t: MainDict["gallery"];
   onLockedClick: () => void;
 }) {
+  const title = pick(album.title, lang);
+  const note = pick(album.note, lang);
   const [photos, setPhotos] = useState<{ photo: VaultPhoto; thumb: string }[]>([]);
   const [open, setOpen] = useState<number | null>(null);
   const locked = album.total - album.previews.length;
@@ -158,13 +171,13 @@ function Album({
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-2">
         <div>
           <h2 id={`${album.slug}-title`} className="t-headline">
-            {album.title}
+            {title}
           </h2>
-          {album.note && <p className="mt-2 max-w-[60ch] text-muted">{album.note}</p>}
+          {note && <p className="mt-2 max-w-[60ch] text-muted">{note}</p>}
         </div>
         <p className="t-body-sm text-muted">
-          {album.total} {album.total === 1 ? "photo" : "photos"}
-          {!cryptoKey && locked > 0 && ` · ${locked} locked`}
+          {t.count(album.total)}
+          {!cryptoKey && locked > 0 && ` · ${t.lockedCount(locked)}`}
         </p>
       </div>
 
@@ -172,7 +185,7 @@ function Album({
         {cryptoKey
           ? photos.map(({ photo, thumb }, i) => (
               <li key={photo.id}>
-                <button type="button" className="gallery-item" onClick={() => setOpen(i)} aria-label={`Open photo ${i + 1}`}>
+                <button type="button" className="gallery-item" onClick={() => setOpen(i)} aria-label={t.openPhoto(i + 1)}>
                   {/* eslint-disable-next-line @next/next/no-img-element -- decrypted blob URL, not optimisable */}
                   <img src={thumb} alt="" width={photo.w} height={photo.h} />
                 </button>
@@ -182,7 +195,7 @@ function Album({
               <li key={p.src}>
                 <div className="gallery-item">
                   {/* eslint-disable-next-line @next/next/no-img-element -- already resized at build time */}
-                  <img src={p.src} alt={`${album.title} — preview ${i + 1}`} width={p.w} height={p.h} loading="lazy" />
+                  <img src={p.src} alt={`${title} — ${t.preview(i + 1)}`} width={p.w} height={p.h} loading="lazy" />
                 </div>
               </li>
             ))}
@@ -191,7 +204,7 @@ function Album({
             <button type="button" className="gallery-item gallery-locked" onClick={onLockedClick}>
               <LockIcon size={26} />
               <span className="t-title">+{locked}</span>
-              <span className="t-body-sm">Enter the password to see them</span>
+              <span className="t-body-sm">{t.enterPassword}</span>
             </button>
           </li>
         )}
@@ -207,7 +220,8 @@ function Album({
           index={open}
           onIndex={setOpen}
           onClose={() => setOpen(null)}
-          title={album.title}
+          title={title}
+          t={t}
         />
       )}
     </section>
@@ -221,7 +235,9 @@ function Lightbox({
   onIndex,
   onClose,
   title,
+  t,
 }: {
+  t: MainDict["gallery"];
   cryptoKey: CryptoKey;
   items: { photo: VaultPhoto; thumb: string }[];
   index: number;
@@ -258,7 +274,7 @@ function Lightbox({
     <dialog
       ref={ref}
       className="lightbox"
-      aria-label={`${title} — photo ${index + 1} of ${items.length}`}
+      aria-label={`${title} — ${t.photoOf(index + 1, items.length)}`}
       onClose={onClose}
       onClick={(e) => e.target === e.currentTarget && ref.current?.close()}
       onKeyDown={(e) => {
@@ -275,16 +291,16 @@ function Lightbox({
         className="lightbox-img"
       />
       <div className="lightbox-bar">
-        <button type="button" onClick={() => go(-1)} aria-label="Previous photo">
+        <button type="button" onClick={() => go(-1)} aria-label={t.previous}>
           ‹
         </button>
         <span>
           {index + 1} / {items.length}
         </span>
-        <button type="button" onClick={() => go(1)} aria-label="Next photo">
+        <button type="button" onClick={() => go(1)} aria-label={t.nextPhoto}>
           ›
         </button>
-        <button type="button" onClick={() => ref.current?.close()} aria-label="Close">
+        <button type="button" onClick={() => ref.current?.close()} aria-label={t.close}>
           ✕
         </button>
       </div>

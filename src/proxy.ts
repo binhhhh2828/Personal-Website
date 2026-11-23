@@ -9,6 +9,12 @@ import { IELTS_PATH_PREFIX } from "@/config/site";
  *  <domain>/ielts/<path>  → served directly in path mode,
  *                           301/308 to the subdomain in subdomain mode
  *  IELTS root (/)         → redirected to a language root (/vi or /en)
+ *
+ * Personal site (main host): Vietnamese is the default and lives at the root.
+ *  /about                 → internally rewritten to /vi/about
+ *  /en/about              → served as-is (English)
+ *  /vi/about              → 308 to /about (one URL per page)
+ *  /  with cookie lang=en → 307 to /en (the reader picked English before)
  */
 
 const IELTS_URL = (process.env.NEXT_PUBLIC_IELTS_URL || "").replace(/\/+$/, "");
@@ -68,9 +74,20 @@ export function proxy(request: NextRequest) {
 
     // Path mode (local dev / preview): /ielts → /ielts/vi
     if (rest === "/") return redirect(request, `${IELTS_PATH_PREFIX}/${preferredLocale(request)}`, 307);
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  // Files (robots.txt, sitemap.xml, /gallery/vault/*.bin, …) are served as they are.
+  if (/\.[a-z0-9]+$/i.test(pathname)) return NextResponse.next();
+
+  // ── Personal site languages ────────────────────────────────────────────────
+  if (pathname === "/en" || pathname.startsWith("/en/")) return NextResponse.next();
+  if (pathname === "/vi" || pathname.startsWith("/vi/")) return redirect(request, pathname.slice(3) || "/", 308);
+  if (pathname === "/" && request.cookies.get("lang")?.value === "en") return redirect(request, "/en", 307);
+
+  const url = request.nextUrl.clone();
+  url.pathname = pathname === "/" ? "/vi" : `/vi${pathname}`;
+  return NextResponse.rewrite(url);
 }
 
 export const config = {

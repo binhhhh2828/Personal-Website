@@ -3,6 +3,7 @@ import { cx } from "@/lib/format";
 import { Container } from "./container";
 import { Photo } from "./photo";
 import { ScratchReveal } from "@/components/effects/scratch-reveal";
+import type { Locale } from "@/config/i18n";
 
 /**
  * Split feature: a large photo bleeding to the viewport edge on one side, dissolving
@@ -25,6 +26,7 @@ export function Split({
   labelledBy,
   className,
   scratch = true,
+  lang = "vi",
   children,
 }: {
   image: string;
@@ -38,6 +40,7 @@ export function Split({
   labelledBy?: string;
   className?: string;
   scratch?: boolean;
+  lang?: Locale;
   children: ReactNode;
 }) {
   const photo = (
@@ -66,7 +69,7 @@ export function Split({
     >
       <div className="split-media">
         <div className="split-media-inner">
-          {scratch ? <ScratchReveal id={image} className="h-full">{photo}</ScratchReveal> : photo}
+          {scratch ? <ScratchReveal id={image} lang={lang} className="h-full">{photo}</ScratchReveal> : photo}
         </div>
       </div>
       <Container className="split-content relative">

@@ -1,14 +1,15 @@
 import "server-only";
 import { getPageContent } from "./index";
+import type { Locale } from "@/config/i18n";
 
 export type StoryChapter = { id: string; title: string; eyebrow?: string; summary?: string };
 
 /**
- * Reads the chapter list from the <Chapter> tags in content/pages/main/about.mdx, so the
+ * Reads the chapter list from the <Chapter> tags in content/pages/main/{lang}/about.mdx, so the
  * home page timeline and chapter links never duplicate titles anywhere.
  */
-export function getStoryChapters(): StoryChapter[] {
-  const page = getPageContent("main", null, "about");
+export function getStoryChapters(lang: Locale): StoryChapter[] {
+  const page = getPageContent("main", lang, "about");
   if (!page) return [];
   const attr = (attrs: string, name: string) => new RegExp(`(?:^|\\s)${name}="([^"]+)"`).exec(attrs)?.[1];
   const chapters: StoryChapter[] = [];

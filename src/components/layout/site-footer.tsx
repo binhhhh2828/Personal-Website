@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { footerColumns } from "@/config/navigation";
-import { profile } from "@/config/profile";
+import { profileShared } from "@/config/profile";
+import { getMainDict } from "@/config/main-i18n";
 import { site } from "@/config/site";
 import type { Locale } from "@/config/i18n";
 import { Container } from "@/components/ui/container";
@@ -9,9 +10,10 @@ import { Container } from "@/components/ui/container";
  * Shared footer (spec "Footer"): #F5F5F7, 12px text at 56% black, a link directory
  * for both sites, then a hairline and the copyright line.
  */
-export function SiteFooter({ from, lang = "en", note }: { from: "main" | "ielts"; lang?: Locale; note?: string }) {
+export function SiteFooter({ from, lang = "vi", note }: { from: "main" | "ielts"; lang?: Locale; note?: string }) {
   const year = new Date().getFullYear();
   const columns = footerColumns(from, lang);
+  const t = getMainDict(lang);
   return (
     // The grey fades in from the page above, so the footer has no hard top edge.
     <footer className="bg-[linear-gradient(to_bottom,var(--canvas)_0,var(--surface)_8rem)] pt-28 text-[12px] leading-[1.33] tracking-[-0.01em] text-muted">
@@ -38,11 +40,11 @@ export function SiteFooter({ from, lang = "en", note }: { from: "main" | "ielts"
               </ul>
             </div>
           ))}
-          {profile.contact.links.length > 0 && (
+          {profileShared.links.length > 0 && (
             <div>
-              <p className="mb-2 font-semibold text-body">Elsewhere</p>
+              <p className="mb-2 font-semibold text-body">{t.footer.elsewhere}</p>
               <ul className="space-y-2">
-                {profile.contact.links.map((l) => (
+                {profileShared.links.map((l) => (
                   <li key={l.href}>
                     <a href={l.href} className="hover:text-body hover:underline">
                       {l.label}

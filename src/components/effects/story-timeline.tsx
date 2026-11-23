@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useId, useRef, useState, type KeyboardEvent } from "react";
 import { cx } from "@/lib/format";
+import type { Locale } from "@/config/i18n";
+import { getMainDict } from "@/config/main-i18n";
+import { mainPath } from "@/config/site";
 
 type Chapter = { id: string; title: string; eyebrow?: string; summary?: string };
 
@@ -10,7 +13,8 @@ type Chapter = { id: string; title: string; eyebrow?: string; summary?: string }
  * Interactive timeline of the life-story chapters. Each milestone is a tab: click (or use
  * ←/→) to open its one-line summary, with a link to the full chapter on /about.
  */
-export function StoryTimeline({ chapters, readLabel = "Read this chapter" }: { chapters: Chapter[]; readLabel?: string }) {
+export function StoryTimeline({ chapters, lang = "vi" }: { chapters: Chapter[]; lang?: Locale }) {
+  const t = getMainDict(lang).effects;
   const [active, setActive] = useState(0);
   const base = useId();
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -29,7 +33,7 @@ export function StoryTimeline({ chapters, readLabel = "Read this chapter" }: { c
 
   return (
     <div className="timeline">
-      <div role="tablist" aria-label="Chapters of my story" className="timeline-track" onKeyDown={onKey}>
+      <div role="tablist" aria-label={t.timeline} className="timeline-track" onKeyDown={onKey}>
         {chapters.map((ch, i) => (
           <button
             key={ch.id}
@@ -60,8 +64,8 @@ export function StoryTimeline({ chapters, readLabel = "Read this chapter" }: { c
         {c.eyebrow && <p className="t-caption text-badge">{c.eyebrow}</p>}
         <p className="t-title mt-1">{c.title}</p>
         {c.summary && <p className="mt-2 text-muted">{c.summary}</p>}
-        <Link href={`/about#${c.id}`} className="link link-more mt-3 inline-block">
-          {readLabel}
+        <Link href={mainPath(lang, `/about#${c.id}`)} className="link link-more mt-3 inline-block">
+          {t.readChapter}
         </Link>
       </div>
     </div>

@@ -4,11 +4,13 @@ import path from "node:path";
 import matter from "gray-matter";
 import { z } from "zod";
 import { readingMinutes } from "./index";
+import { mainPath } from "@/config/site";
 
 /**
  * Journal — personal thoughts and notes on the main site.
  * Files: content/journal/*.mdx (files starting with "_" are ignored).
- * URL: /journal/{slug}
+ * URL: /journal/{slug} for Vietnamese notes, /en/journal/{slug} for English ones —
+ * each note lives in the language it is written in.
  */
 
 const JOURNAL_ROOT = path.join(process.cwd(), "content", "journal");
@@ -25,8 +27,8 @@ const journalSchema = z.object({
   publishedAt: date,
   updatedAt: date.optional(),
   tags: z.array(z.string()).default([]),
-  /** Language of this note; the personal site is English by default. */
-  language: z.enum(["en", "vi"]).default("en"),
+  /** Language the note is written in; it is published under that language only. */
+  language: z.enum(["en", "vi"]).default("vi"),
   /** Public path or URL. Shown as a frame until the file exists. */
   coverImage: z.string().optional(),
   draft: z.boolean().default(false),
@@ -60,7 +62,7 @@ function load(): JournalEntry[] {
       ...parsed.data,
       body: content,
       readingMinutes: readingMinutes(content),
-      path: `/journal/${parsed.data.slug}`,
+      path: mainPath(parsed.data.language, `/journal/${parsed.data.slug}`),
     });
   }
   return entries.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());

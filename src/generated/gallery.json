@@ -13,8 +13,14 @@
   "albums": [
     {
       "slug": "childhood",
-      "title": "Childhood",
-      "note": "Uông Bí, birthday cakes, a sofa, and a kid who already looked a little nostalgic.",
+      "title": {
+        "vi": "Tuổi thơ",
+        "en": "Childhood"
+      },
+      "note": {
+        "vi": "Uông Bí, những chiếc bánh sinh nhật, một bộ ghế, và một đứa trẻ đã trông hơi hoài niệm từ bé.",
+        "en": "Uông Bí, birthday cakes, a sofa, and a kid who already looked a little nostalgic."
+      },
       "total": 15,
       "previews": [
         {
@@ -40,8 +46,14 @@
     },
     {
       "slug": "school",
-      "title": "School days",
-      "note": "Classrooms, red scarves, school assemblies and the friends who were there.",
+      "title": {
+        "vi": "Thời đi học",
+        "en": "School days"
+      },
+      "note": {
+        "vi": "Lớp học, khăn quàng đỏ, những buổi tập trung toàn trường và những người bạn đã ở đó.",
+        "en": "Classrooms, red scarves, school assemblies and the friends who were there."
+      },
       "total": 21,
       "previews": [
         {

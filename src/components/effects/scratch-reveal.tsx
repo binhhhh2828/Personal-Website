@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { cx } from "@/lib/format";
+import type { Locale } from "@/config/i18n";
+import { getMainDict } from "@/config/main-i18n";
 
 const BRUSH = 46; // px radius-ish (line width)
 const DONE_AT = 0.45; // fraction cleared before the rest dissolves on its own
@@ -21,14 +23,18 @@ export function ScratchReveal({
   id,
   children,
   className,
-  hint = "Scratch to reveal",
+  lang = "vi",
+  hint,
 }: {
   /** Unique per photo — remembers the reveal for this visit. */
   id: string;
   children: ReactNode;
   className?: string;
+  lang?: Locale;
+  /** Overrides the default "Scratch to reveal" hint (e.g. a shorter one on small cards). */
   hint?: string;
 }) {
+  const t = getMainDict(lang).effects;
   const rootRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -202,10 +208,10 @@ export function ScratchReveal({
             strokeLinejoin="round"
           />
         </svg>
-        {hint}
+        {hint ?? t.scratch}
       </p>
       <button type="button" className="scratch-button" data-scratch-reveal>
-        Reveal photo
+        {t.reveal}
       </button>
     </div>
   );

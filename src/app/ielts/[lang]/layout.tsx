@@ -33,7 +33,7 @@ export default async function IeltsLayout({ children, params }: LayoutProps<"/ie
   return (
     <Document lang={lang} skipLabel={lang === "vi" ? "Chuyển đến nội dung" : "Skip to content"}>
       {/* Personal brand bar scrolls away; the IELTS product bar stays. */}
-      <GlobalNav from="ielts" sticky={false} />
+      <GlobalNav from="ielts" lang={lang} sticky={false} />
       <IeltsLocalNav lang={lang} switchMap={getLanguageSwitchMap(lang)} />
       <main id="main" className="flex-1">
         {children}

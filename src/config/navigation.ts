@@ -1,5 +1,6 @@
 import type { Locale } from "./i18n";
-import { ieltsHref, ieltsHrefFromMain, mainHrefFromIelts } from "./site";
+import { ieltsHref, ieltsHrefFromMain, mainHrefFromIelts, mainPath } from "./site";
+import { getMainDict } from "./main-i18n";
 import { sections, type SectionId } from "./content";
 
 export type NavItem = {
@@ -13,20 +14,23 @@ type From = "main" | "ielts";
 
 /**
  * Global navigation — the personal brand. Rendered on BOTH sites (Apple-style global bar),
- * so links are built relative to whichever site is rendering.
+ * so links are built relative to whichever site is rendering, in the reader's language.
  */
-export function globalNav(from: From): NavItem[] {
+export function globalNav(from: From, lang: Locale = "vi"): NavItem[] {
+  const t = getMainDict(lang).nav;
   const main = (path: string): NavItem =>
-    from === "main" ? { label: "", href: path } : { label: "", href: mainHrefFromIelts(path), crossSite: true };
-  return [
-    { ...main("/about"), label: "About" },
-    { ...main("/projects"), label: "Projects" },
-    { ...main("/research"), label: "Research" },
-    { ...main("/journal"), label: "Journal" },
-    { ...main("/gallery"), label: "Gallery" },
     from === "main"
-      ? { label: "IELTS", href: ieltsHrefFromMain("/"), crossSite: true }
-      : { label: "IELTS", href: ieltsHref("/") },
+      ? { label: "", href: mainPath(lang, path) }
+      : { label: "", href: mainHrefFromIelts(mainPath(lang, path)), crossSite: true };
+  return [
+    { ...main("/about"), label: t.about },
+    { ...main("/projects"), label: t.projects },
+    { ...main("/research"), label: t.research },
+    { ...main("/journal"), label: t.journal },
+    { ...main("/gallery"), label: t.gallery },
+    from === "main"
+      ? { label: t.ielts, href: ieltsHrefFromMain(`/${lang}`), crossSite: true }
+      : { label: t.ielts, href: ieltsHref(`/${lang}`) },
   ];
 }
 
@@ -44,20 +48,22 @@ export function ieltsNav(lang: Locale): NavItem[] {
 }
 
 /** Footer directory, shared by both sites. */
-export function footerColumns(from: From, lang: Locale = "en") {
-  const m = (path: string) => (from === "main" ? path : mainHrefFromIelts(path));
+export function footerColumns(from: From, lang: Locale = "vi") {
+  const t = getMainDict(lang);
+  const m = (path: string) => (from === "main" ? mainPath(lang, path) : mainHrefFromIelts(mainPath(lang, path)));
   const i = (path: string) => (from === "main" ? ieltsHrefFromMain(path) : ieltsHref(path));
   const crossToIelts = from === "main";
   return [
     {
-      title: "Personal",
+      title: t.footer.personal,
       crossSite: from === "ielts",
       links: [
-        { label: "About", href: m("/about") },
-        { label: "Projects", href: m("/projects") },
-        { label: "Research", href: m("/research") },
-        { label: "Journal", href: m("/journal") },
-        { label: "Contact", href: m("/#contact") },
+        { label: t.nav.about, href: m("/about") },
+        { label: t.nav.projects, href: m("/projects") },
+        { label: t.nav.research, href: m("/research") },
+        { label: t.nav.journal, href: m("/journal") },
+        { label: t.nav.gallery, href: m("/gallery") },
+        { label: t.footer.contact, href: m("/#contact") },
       ],
     },
     {

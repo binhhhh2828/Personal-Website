@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ielts, ieltsHrefFromMain, site } from "@/config/site";
-import { profile } from "@/config/profile";
+import { ielts, ieltsHrefFromMain, mainPath, site } from "@/config/site";
+import type { Locale } from "@/config/i18n";
+import { getMainDict } from "@/config/main-i18n";
+import { getProfile } from "@/config/profile";
 import { Container } from "@/components/ui/container";
 import { Photo } from "@/components/ui/photo";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -17,10 +19,13 @@ import { getStoryChapters } from "@/lib/content/chapters";
 import { getJournal } from "@/lib/content/journal";
 import { mainMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  ...mainMetadata({ description: site.description, path: "/" }),
-  title: { absolute: site.name },
-};
+export async function generateMetadata({ params }: PageProps<"/[lang]">): Promise<Metadata> {
+  const lang = (await params).lang as Locale;
+  return {
+    ...mainMetadata(lang, { description: getMainDict(lang).siteDescription, path: "/" }),
+    title: { absolute: site.name },
+  };
+}
 
 /**
  * Home — seven sections that flow into each other: photos dissolve into the page
@@ -30,8 +35,13 @@ export const metadata: Metadata = {
  * Effects: scratch-to-reveal photos, text scramble eyebrows, parallax hero glow,
  * story timeline, hover-reveal works, flip cards, cursor spotlight, draggable Polaroids.
  */
-export default function Home() {
-  const chapters = getStoryChapters();
+export default async function Home({ params }: PageProps<"/[lang]">) {
+  const lang = (await params).lang as Locale;
+  const t = getMainDict(lang);
+  const h = t.home;
+  const profile = getProfile(lang);
+  const href = (path: string) => mainPath(lang, path);
+  const chapters = getStoryChapters(lang);
   const works = profile.works.filter((w) => w.featured).slice(0, 3);
   const journal = getJournal().slice(0, 3);
 
@@ -41,8 +51,9 @@ export default function Home() {
       <Split
         hero
         image={profile.portrait}
-        alt={`Portrait of ${profile.name}`}
-        label="Portrait"
+        alt={`${h.portraitAlt} ${profile.name}`}
+        label={h.portraitLabel}
+        lang={lang}
         priority
         labelledBy="hero"
         className="aurora"
@@ -56,11 +67,11 @@ export default function Home() {
           </h1>
           <p className="mt-5 max-w-[34ch] text-[19px] leading-[1.42] text-muted">{profile.intro}</p>
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-            <Link href="/about" className="btn btn-primary">
-              Read my story
+            <Link href={href("/about")} className="btn btn-primary">
+              {h.readStory}
             </Link>
             <a href="#works" className="link link-more">
-              See my work
+              {h.seeWork}
             </a>
           </div>
         </div>
@@ -68,8 +79,8 @@ export default function Home() {
 
       {/* 2 · About — the photo swaps sides; the grey band melts in and out */}
       <div className="band-soft">
-        <Split side="left" image="/images/home/about.jpg" alt="Me as a kid, smiling on a pillow" label="About" labelledBy="about">
-          <p className="t-eyebrow text-badge">About</p>
+        <Split side="left" lang={lang} image="/images/home/about.jpg" alt={h.aboutPhotoAlt} label={h.aboutEyebrow} labelledBy="about">
+          <p className="t-eyebrow text-badge">{h.aboutEyebrow}</p>
           <h2 id="about" className="t-headline mt-2">
             {profile.role}
           </h2>
@@ -80,10 +91,10 @@ export default function Home() {
             ))}
           </div>
           <div className="mt-10">
-            <StoryTimeline chapters={chapters} />
+            <StoryTimeline chapters={chapters} lang={lang} />
           </div>
-          <Link href="/about" className="btn btn-primary mt-8">
-            Read the full story
+          <Link href={href("/about")} className="btn btn-primary mt-8">
+            {h.readFullStory}
           </Link>
         </Split>
       </div>
@@ -93,12 +104,12 @@ export default function Home() {
         <Container>
           <SectionHeading
             id="works-title"
-            eyebrow={<TextScramble text="Selected works" />}
-            href="/projects"
-            linkLabel="All projects"
+            eyebrow={<TextScramble text={h.worksEyebrow} />}
+            href={href("/projects")}
+            linkLabel={h.allProjects}
             className="reveal-scroll"
           >
-            Things I’ve built and studied.
+            {h.worksTitle}
           </SectionHeading>
           <ul className="reveal-scroll mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {works.map((w) => {
@@ -115,7 +126,7 @@ export default function Home() {
                   />
                   <div className="p-6 md:p-7">
                     <p className="t-caption text-badge">
-                      {w.kind === "project" ? "Project" : "Research"}
+                      {w.kind === "project" ? h.project : h.researchKind}
                       <span className="text-muted"> · {w.year}</span>
                     </p>
                     <h3 className="t-title mt-2">{w.title}</h3>
@@ -137,8 +148,8 @@ export default function Home() {
             })}
           </ul>
           <p className="mt-8">
-            <Link href="/research" className="link link-more">
-              Research
+            <Link href={href("/research")} className="link link-more">
+              {h.research}
             </Link>
           </p>
         </Container>
@@ -147,27 +158,27 @@ export default function Home() {
       {/* 4 · Explorations */}
       <section aria-labelledby="explorations" className="pb-16 md:pb-24">
         <Container>
-          <SectionHeading id="explorations" eyebrow={<TextScramble text="Explorations" />} className="reveal-scroll">
-            What I keep coming back to.
+          <SectionHeading id="explorations" eyebrow={<TextScramble text={h.explorationsEyebrow} />} className="reveal-scroll">
+            {h.explorationsTitle}
           </SectionHeading>
           <ul className="reveal-scroll mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {profile.explorations.map((x, i) => (
               <li key={x.title}>
-                <FlipCard index={i} title={x.title} note={x.note} />
+                <FlipCard index={i} title={x.title} note={x.note} hint={t.effects.flip} />
               </li>
             ))}
           </ul>
 
           {/* IELTS Writing Lab — one exploration, given a black "Pro" tile */}
           <a
-            href={ieltsHrefFromMain("/")}
+            href={ieltsHrefFromMain(`/${lang}`)}
             className="on-black tile-link reveal-scroll relative mt-5 block overflow-hidden rounded-[28px] px-7 py-12 text-center md:px-12 md:py-20"
           >
             <Spotlight />
-            <p className="t-eyebrow text-on-black-muted">An exploration in language</p>
+            <p className="t-eyebrow text-on-black-muted">{h.ieltsEyebrow}</p>
             <p className="t-display mx-auto mt-2">{ielts.name}</p>
-            <p className="t-lede mx-auto mt-4 max-w-[30ch]">{ielts.tagline}</p>
-            <span className="link link-more mt-6 inline-block">Visit the lab</span>
+            <p className="t-lede mx-auto mt-4 max-w-[30ch]">{h.ieltsTagline}</p>
+            <span className="link link-more mt-6 inline-block">{h.visitLab}</span>
           </a>
         </Container>
       </section>
@@ -177,15 +188,15 @@ export default function Home() {
         <Container>
           <SectionHeading
             id="journal"
-            eyebrow={<TextScramble text="Journal" />}
-            href="/journal"
-            linkLabel="All notes"
+            eyebrow={<TextScramble text={h.journalEyebrow} />}
+            href={href("/journal")}
+            linkLabel={h.allNotes}
             className="reveal-scroll"
           >
-            Thoughts and notes.
+            {h.journalTitle}
           </SectionHeading>
           <div className="reveal-scroll mt-10">
-            <JournalList entries={journal} emptyText="The first notes are being written." />
+            <JournalList entries={journal} emptyText={h.journalEmpty} lang={lang} />
           </div>
         </Container>
       </section>
@@ -195,21 +206,23 @@ export default function Home() {
         <Container>
           <SectionHeading
             id="beyond"
-            eyebrow={<TextScramble text="Beyond work" />}
-            href="/about#leisure"
-            linkLabel="More in my story"
+            eyebrow={<TextScramble text={h.beyondEyebrow} />}
+            href={href("/about#leisure")}
+            linkLabel={h.moreInStory}
             className="reveal-scroll"
           >
-            Life outside the desk.
+            {h.beyondTitle}
           </SectionHeading>
           <p className="reveal-scroll mt-3 text-muted">
-            Scratch to see each photo<span className="hidden md:inline"> — and drag them around the table</span>.
+            {h.beyondHint}
+            <span className="hidden md:inline">{h.beyondHintDrag}</span>.
           </p>
           <div className="reveal-scroll mt-10">
             <PolaroidBoard
+              tidyLabel={h.tidy}
               cards={profile.beyondWork.map((b) => (
                 <figure key={b.image}>
-                  <ScratchReveal id={b.image} hint="Scratch">
+                  <ScratchReveal id={b.image} lang={lang} hint={t.effects.scratchShort}>
                     <Photo src={b.image} alt={b.title} ratio="1/1" rounded={false} label={b.title} sizes="320px" />
                   </ScratchReveal>
                   <figcaption className="px-1 pt-4">
@@ -227,9 +240,9 @@ export default function Home() {
       <section id="contact" aria-labelledby="contact-title" className="relative pt-8 pb-4 md:pt-16">
         <Spotlight color="rgba(57, 181, 74, 0.28)" size={640} />
         <Container className="reveal-scroll text-center">
-          <p className="t-eyebrow text-badge">Contact</p>
+          <p className="t-eyebrow text-badge">{h.contactEyebrow}</p>
           <h2 id="contact-title" className="t-display mx-auto mt-2 w-fit text-fresh">
-            Let’s talk.
+            {h.contactTitle}
           </h2>
           <p className="t-lede mx-auto mt-5 max-w-[34ch] text-muted">{profile.contact.note}</p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -238,7 +251,7 @@ export default function Home() {
                 {profile.contact.email}
               </a>
             ) : (
-              <span className="btn btn-chip">[Placeholder] Add your email in src/config/profile.ts</span>
+              <span className="btn btn-chip">{h.emailMissing}</span>
             )}
             {profile.contact.links.map((l) => (
               <a key={l.href} href={l.href} className="btn btn-outline">
