@@ -18,17 +18,15 @@ export default function GlobalNotFound() {
   return (
     <Document lang="en">
       <main id="main" className="flex flex-1 items-center">
-        <Container className="py-32">
-          <p className="font-mono text-xs text-muted">404</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Page not found</h1>
-          <p className="mt-2 text-lg text-muted" lang="vi">
+        <Container className="py-24 text-center md:py-32">
+          <p className="t-eyebrow text-badge">404</p>
+          <h1 className="t-display mt-2">Page not found</h1>
+          <p className="t-lede mt-4 text-muted" lang="vi">
             Không tìm thấy trang
           </p>
-          <p className="mt-8">
-            <Link href="/" className="underline decoration-accent decoration-2 underline-offset-[6px]">
-              Home →
-            </Link>
-          </p>
+          <Link href="/" className="btn btn-primary mt-8">
+            Home
+          </Link>
         </Container>
       </main>
     </Document>

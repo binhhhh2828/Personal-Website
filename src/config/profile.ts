@@ -1,66 +1,105 @@
 /**
- * Personal website data.
+ * Personal website data — the short, structured facts about you.
+ * Your longer life story (childhood, education, passions…) lives in
+ * content/pages/main/about.mdx, written in prose.
  *
  * EVERYTHING HERE IS A PLACEHOLDER. Nothing has been invented about you:
  * each value is marked "[Placeholder]" or "[...]" until you replace it.
- * Pages render whatever is here, so editing this file is all you need.
+ *
+ * Photos: every `image` is the path where the photo WILL live under /public.
+ * Until the file exists, the site shows an empty frame labelled with that path.
+ * To add one, save your photo at that path (e.g. public/images/portrait.jpg) and rebuild.
  */
 
-export type Project = {
+export type Work = {
+  kind: "project" | "research";
   title: string;
   year: string;
   summary: string;
   role?: string;
+  /** Venue, course or lab — mostly for research. */
+  venue?: string;
   href?: string;
   tags: string[];
+  image: string;
+  /** Show on the home page. */
+  featured?: boolean;
 };
 
-export type ResearchItem = {
-  title: string;
-  year: string;
-  venue?: string;
-  summary: string;
-  href?: string;
-};
+export type Exploration = { title: string; note: string };
+export type BeyondWorkItem = { title: string; note: string; image: string };
 
 export const profile = {
   name: "[Your Name]",
-  headline: "[Placeholder] A one-sentence statement of what you build, study and care about.",
-  intro: [
-    "[Placeholder] Two or three sentences introducing yourself — your field of study, what you are building, and the questions you keep returning to.",
-    "[Placeholder] This site collects projects, research notes and learning in public.",
+  /** One short line under your name, e.g. "Student · Builder · Learner". */
+  role: "[Placeholder] Student · Builder · Learner",
+  location: "[City, Country]",
+  /** The big statement in the hero. */
+  headline: "[Placeholder] A sentence about what you build and why.",
+  intro: "[Placeholder] Two sentences introducing yourself — what you study, what you are building, and the questions you keep returning to.",
+  portrait: "/images/portrait.jpg",
+
+  /** Home page "About" teaser. The full story is content/pages/main/about.mdx. */
+  aboutTeaser: [
+    "[Placeholder] Where you grew up and what shaped you early on.",
+    "[Placeholder] What you are studying or working on now, and what drives you.",
   ],
-  /** Areas shown on the home page. Edit labels/descriptions freely. */
-  interests: [
-    { label: "Technology", note: "[Placeholder] What you build and with which tools." },
-    { label: "Research", note: "[Placeholder] Questions you are investigating." },
-    { label: "Product", note: "[Placeholder] Products and side projects." },
-    { label: "Language & learning", note: "[Placeholder] How you learn, including IELTS Writing Lab." },
-    { label: "Exploration", note: "[Placeholder] Other interests." },
-  ],
-  about: [
-    "[Placeholder] Your longer introduction: background, current studies or work, and what you are working toward.",
-    "[Placeholder] What this website is for and how you hope readers use it.",
-  ],
-  links: [
-    // { label: "GitHub", href: "https://github.com/..." },
-    // { label: "Email", href: "mailto:..." },
-  ] as { label: string; href: string }[],
-  projects: [
+
+  works: [
     {
+      kind: "project",
       title: "[Placeholder] Project title",
       year: "[Year]",
-      summary: "[Placeholder] One or two sentences on the problem, your approach and the outcome.",
+      summary: "[Placeholder] The problem, your approach, and the outcome — in one or two sentences.",
       role: "[Role]",
       tags: ["[tag]"],
+      image: "/images/works/project-1.jpg",
+      featured: true,
     },
-  ] as Project[],
-  research: [
     {
-      title: "[Placeholder] Research topic or paper title",
+      kind: "project",
+      title: "[Placeholder] Second project",
       year: "[Year]",
-      venue: "[Venue / Course / Lab]",
-      summary: "[Placeholder] The question, method and what you found.",
+      summary: "[Placeholder] One or two sentences.",
+      role: "[Role]",
+      tags: ["[tag]"],
+      image: "/images/works/project-2.jpg",
+      featured: true,
     },
-  ] as ResearchItem[],
+    {
+      kind: "research",
+      title: "[Placeholder] Research topic or paper",
+      year: "[Year]",
+      summary: "[Placeholder] The question, the method, and what you found.",
+      venue: "[Course / Lab / Venue]",
+      tags: ["[tag]"],
+      image: "/images/works/research-1.jpg",
+      featured: true,
+    },
+  ] as Work[],
+
+  /** Areas of interest you keep exploring. */
+  explorations: [
+    { title: "Technology", note: "[Placeholder] What you build and with which tools." },
+    { title: "Research", note: "[Placeholder] Questions you are investigating." },
+    { title: "Product", note: "[Placeholder] Products and side projects." },
+    { title: "Language & learning", note: "[Placeholder] How you learn — including IELTS Writing Lab." },
+  ] as Exploration[],
+
+  /** Life outside work and study: hobbies, entertainment, experiences. */
+  beyondWork: [
+    { title: "[Placeholder] Hobby", note: "[Placeholder] Why you love it.", image: "/images/beyond/1.jpg" },
+    { title: "[Placeholder] Entertainment", note: "[Placeholder] Books, films, music, games…", image: "/images/beyond/2.jpg" },
+    { title: "[Placeholder] Experience", note: "[Placeholder] A trip, an event, a memory.", image: "/images/beyond/3.jpg" },
+  ] as BeyondWorkItem[],
+
+  contact: {
+    note: "[Placeholder] What you are open to — collaborations, questions, or just saying hello.",
+    /** e.g. "hello@yourname.id.vn". Left empty until you add it. */
+    email: "",
+    links: [
+      // { label: "GitHub", href: "https://github.com/..." },
+      // { label: "LinkedIn", href: "https://www.linkedin.com/in/..." },
+    ] as { label: string; href: string }[],
+  },
 };

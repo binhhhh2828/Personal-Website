@@ -1,28 +1,30 @@
 import type { ReactNode } from "react";
-import { Eyebrow } from "@/components/ui/eyebrow";
+import { Container } from "@/components/ui/container";
 
-/** Large editorial page heading shared by listing pages on both sites. */
+/** Page intro on the white canvas: eyebrow, large headline, lede. Shared by both sites. */
 export function PageIntro({
   eyebrow,
   title,
   description,
   children,
+  center = false,
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
   children?: ReactNode;
+  center?: boolean;
 }) {
   return (
-    <header className="reveal grid gap-6 pt-16 pb-12 md:grid-cols-12 md:pt-24 md:pb-16">
-      <div className="md:col-span-8">
-        {eyebrow && <Eyebrow className="mb-5">{eyebrow}</Eyebrow>}
-        <h1 className="font-display text-[2.75rem] leading-[1.02] text-balance sm:text-6xl md:text-7xl">{title}</h1>
+    <header>
+      <Container className={`reveal pt-14 pb-10 md:pt-20 md:pb-14 ${center ? "text-center" : ""}`}>
+        {eyebrow && <p className="t-eyebrow mb-3 text-badge">{eyebrow}</p>}
+        <h1 className={`t-display max-w-[18ch] ${center ? "mx-auto" : ""}`}>{title}</h1>
         {description && (
-          <p className="mt-6 max-w-[52ch] font-body text-lg leading-relaxed text-muted">{description}</p>
+          <p className={`t-lede mt-5 max-w-[34ch] text-muted ${center ? "mx-auto" : ""}`}>{description}</p>
         )}
-      </div>
-      {children && <div className="md:col-span-4 md:self-end">{children}</div>}
+        {children && <div className="mt-8">{children}</div>}
+      </Container>
     </header>
   );
 }

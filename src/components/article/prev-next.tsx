@@ -1,28 +1,28 @@
 import Link from "next/link";
-import { getDictionary, type Locale } from "@/config/i18n";
-import { entryHref, type Entry } from "@/lib/content";
 
-export function PrevNext({ previous, next, lang }: { previous?: Entry; next?: Entry; lang: Locale }) {
+type Item = { href: string; title: string };
+
+/** Previous / next as two surface tiles. Labels are passed in so both sites can localise. */
+export function PrevNext({
+  previous,
+  next,
+  labels,
+}: {
+  previous?: Item;
+  next?: Item;
+  labels: { previous: string; next: string };
+}) {
   if (!previous && !next) return null;
-  const t = getDictionary(lang);
+  const tile = (item: Item, label: string, rel: "prev" | "next", align: string) => (
+    <Link href={item.href} rel={rel} className={`tile tile-link group block p-6 md:p-8 ${align}`}>
+      <span className="t-body-sm text-muted">{label}</span>
+      <span className="t-title mt-2 block text-balance group-hover:text-link">{item.title}</span>
+    </Link>
+  );
   return (
-    <nav aria-label={`${t.previous} / ${t.next}`} className="grid border-t border-rule sm:grid-cols-2">
-      <div className="py-6 sm:pr-6">
-        {previous && (
-          <Link href={entryHref(previous)} rel="prev" className="group block">
-            <span className="font-mono text-xs text-muted">← {t.previous}</span>
-            <span className="mt-1 block font-semibold tracking-tight text-balance group-hover:text-accent-ink">{previous.title}</span>
-          </Link>
-        )}
-      </div>
-      <div className="border-t border-rule py-6 sm:border-t-0 sm:border-l sm:pl-6 sm:text-right">
-        {next && (
-          <Link href={entryHref(next)} rel="next" className="group block">
-            <span className="font-mono text-xs text-muted">{t.next} →</span>
-            <span className="mt-1 block font-semibold tracking-tight text-balance group-hover:text-accent-ink">{next.title}</span>
-          </Link>
-        )}
-      </div>
+    <nav aria-label={`${labels.previous} / ${labels.next}`} className="grid gap-4 md:grid-cols-2">
+      <div>{previous && tile(previous, `‹ ${labels.previous}`, "prev", "")}</div>
+      <div>{next && tile(next, `${labels.next} ›`, "next", "md:text-right")}</div>
     </nav>
   );
 }

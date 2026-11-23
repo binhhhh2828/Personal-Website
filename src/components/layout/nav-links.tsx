@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useId, useState } from "react";
+import { useId, useState, type ReactNode } from "react";
 import type { NavItem } from "@/config/navigation";
 import { cx } from "@/lib/format";
 
@@ -11,100 +11,137 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-function Item({
+function NavAnchor({
   item,
-  pathname,
   className,
   onNavigate,
+  children,
+  active,
 }: {
   item: NavItem;
-  pathname: string;
-  className?: string;
+  className: string;
   onNavigate?: () => void;
+  children: ReactNode;
+  active: boolean;
 }) {
-  const active = isActive(pathname, item.href);
-  const cls = cx(
-    "transition-colors hover:text-fg",
-    active ? "text-fg" : "text-muted",
-    className,
-  );
-  const label = (
-    <>
-      {item.label}
-      {item.crossSite && (
-        <span aria-hidden className="ml-0.5 text-subtle">
-          ↗
-        </span>
-      )}
-    </>
-  );
   // Cross-site links change host or root layout — a full navigation is correct.
   return item.crossSite ? (
-    <a href={item.href} className={cls} onClick={onNavigate}>
-      {label}
+    <a href={item.href} className={className} onClick={onNavigate}>
+      {children}
     </a>
   ) : (
-    <Link
-      href={item.href}
-      className={cls}
-      aria-current={active ? "page" : undefined}
-      onClick={onNavigate}
-    >
-      {label}
+    <Link href={item.href} className={className} aria-current={active ? "page" : undefined} onClick={onNavigate}>
+      {children}
     </Link>
   );
 }
 
-/** Desktop inline nav + mobile disclosure menu. */
+/**
+ * Navigation links for the global bar (dark, translucent) or the local bar (light).
+ * Inline from 834px; below that, a disclosure menu (spec: collapse when links don't fit).
+ */
 export function NavLinks({
   items,
   menuLabel,
   closeLabel,
+  variant,
+  extra,
 }: {
   items: NavItem[];
   menuLabel: string;
   closeLabel: string;
+  variant: "global" | "local";
+  /** Always-visible control after the links (e.g. language switcher). */
+  extra?: ReactNode;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const panelId = useId();
+  const close = () => setOpen(false);
+  const dark = variant === "global";
+
+  const inlineCls = (active: boolean) =>
+    cx(
+      "t-body-sm transition-colors",
+      dark
+        ? active
+          ? "text-white"
+          : "text-white/80 hover:text-white"
+        : active
+          ? "text-ink"
+          : "text-body/80 hover:text-link",
+    );
+  const menuCls = (active: boolean) =>
+    cx(
+      "flex min-h-12 items-center font-display text-[24px] font-semibold tracking-[0.009em] transition-colors",
+      dark
+        ? active
+          ? "text-white"
+          : "text-white/80 hover:text-white"
+        : active
+          ? "text-ink"
+          : "text-body hover:text-link",
+    );
 
   return (
     <>
-      <ul className="hidden items-center gap-7 text-sm md:flex">
-        {items.map((item) => (
-          <li key={item.href}>
-            <Item item={item} pathname={pathname} />
-          </li>
-        ))}
-      </ul>
+      <div className="hidden items-center gap-6 min-[834px]:flex">
+        <ul className={cx("flex items-center", dark ? "gap-7" : "gap-6")}>
+          {items.map((item) => {
+            const active = isActive(pathname, item.href);
+            return (
+              <li key={item.href}>
+                <NavAnchor item={item} active={active} className={inlineCls(active)}>
+                  {item.label}
+                </NavAnchor>
+              </li>
+            );
+          })}
+        </ul>
+        {extra}
+      </div>
 
-      <button
-        type="button"
-        className="-mr-2 p-2 font-mono text-xs tracking-wider uppercase md:hidden"
-        aria-expanded={open}
-        aria-controls={panelId}
-        onClick={() => setOpen((v) => !v)}
-      >
-        {open ? closeLabel : menuLabel}
-      </button>
+      <div className="flex items-center gap-3 min-[834px]:hidden">
+        {extra}
+        <button
+          type="button"
+          className={cx("t-body-sm -mr-2 flex h-11 items-center gap-1.5 px-2", dark ? "text-white/90" : "text-ink")}
+          aria-expanded={open}
+          aria-controls={panelId}
+          onClick={() => setOpen((v) => !v)}
+        >
+          {open ? closeLabel : menuLabel}
+          <svg
+            aria-hidden
+            width="10"
+            height="10"
+            viewBox="0 0 10 10"
+            className={cx("transition-transform", open && "rotate-180")}
+          >
+            <path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.3" />
+          </svg>
+        </button>
+      </div>
 
       <div
         id={panelId}
         hidden={!open}
-        className="absolute inset-x-0 top-full z-40 border-b border-rule bg-bg shadow-[0_12px_24px_-16px_rgb(25_25_25_/0.25)] md:hidden"
+        className={cx(
+          "absolute inset-x-0 top-full z-30 min-[834px]:hidden",
+          dark ? "bg-[#1d1d1f]" : "border-b border-hairline bg-canvas",
+        )}
       >
-        <ul className="mx-auto max-w-(--container-page) px-4 py-2 sm:px-6">
-          {items.map((item) => (
-            <li key={item.href} className="border-b border-rule last:border-0">
-              <Item
-                item={item}
-                pathname={pathname}
-                className="block py-3.5 text-base"
-                onNavigate={() => setOpen(false)}
-              />
-            </li>
-          ))}
+        <ul className="px-4 pt-2 pb-6">
+          {items.map((item) => {
+            const active = isActive(pathname, item.href);
+            return (
+              <li key={item.href}>
+                <NavAnchor item={item} active={active} onNavigate={close} className={menuCls(active)}>
+                  {item.label}
+                </NavAnchor>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </>

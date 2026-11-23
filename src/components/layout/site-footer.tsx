@@ -1,33 +1,60 @@
-import { ielts, site } from "@/config/site";
+import Link from "next/link";
+import { footerColumns } from "@/config/navigation";
+import { profile } from "@/config/profile";
+import { site } from "@/config/site";
+import type { Locale } from "@/config/i18n";
 import { Container } from "@/components/ui/container";
 
-/** Shared footer: the same brand line on both sites. */
-export function SiteFooter({
-  mainHref,
-  ieltsHref,
-  note,
-}: {
-  mainHref: string;
-  ieltsHref: string;
-  note?: string;
-}) {
+/**
+ * Shared footer (spec "Footer"): #F5F5F7, 12px text at 56% black, a link directory
+ * for both sites, then a hairline and the copyright line.
+ */
+export function SiteFooter({ from, lang = "en", note }: { from: "main" | "ielts"; lang?: Locale; note?: string }) {
   const year = new Date().getFullYear();
+  const columns = footerColumns(from, lang);
   return (
-    <footer className="mt-24 border-t border-rule">
-      <Container className="flex flex-col gap-6 py-10 font-mono text-xs text-muted sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-1">
-          <p className="text-fg">{site.name}</p>
-          {note && <p>{note}</p>}
-        </div>
-        <nav aria-label="Sites" className="flex gap-6">
-          <a href={mainHref} className="transition-colors hover:text-fg">
-            Personal site
-          </a>
-          <a href={ieltsHref} className="transition-colors hover:text-fg">
-            {ielts.name}
-          </a>
+    <footer className="mt-24 bg-surface text-[12px] leading-[1.33] tracking-[-0.01em] text-black/56">
+      <Container className="py-10">
+        {note && <p className="border-b border-hairline pb-4">{note}</p>}
+        <nav aria-label="Footer" className="grid grid-cols-2 gap-8 py-6 sm:grid-cols-3">
+          {columns.map((col) => (
+            <div key={col.title}>
+              <p className="mb-2 font-semibold text-body">{col.title}</p>
+              <ul className="space-y-2">
+                {col.links.map((l) => (
+                  <li key={l.href}>
+                    {col.crossSite ? (
+                      <a href={l.href} className="hover:text-body hover:underline">
+                        {l.label}
+                      </a>
+                    ) : (
+                      <Link href={l.href} className="hover:text-body hover:underline">
+                        {l.label}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          {profile.contact.links.length > 0 && (
+            <div>
+              <p className="mb-2 font-semibold text-body">Elsewhere</p>
+              <ul className="space-y-2">
+                {profile.contact.links.map((l) => (
+                  <li key={l.href}>
+                    <a href={l.href} className="hover:text-body hover:underline">
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </nav>
-        <p>© {year}</p>
+        <p className="border-t border-hairline pt-4">
+          Copyright © {year} {site.name}.
+        </p>
       </Container>
     </footer>
   );

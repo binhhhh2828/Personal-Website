@@ -5,7 +5,7 @@ import { contentTypeLabels, getCategory, sections } from "@/config/content";
 import { getDictionary, localeLabels, type Locale } from "@/config/i18n";
 import { ieltsAbsolute, ieltsHref, site } from "@/config/site";
 import { Container } from "@/components/ui/container";
-import { Eyebrow } from "@/components/ui/eyebrow";
+import { Photo } from "@/components/ui/photo";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { EntryList } from "@/components/article/entry-list";
 import { PrevNext } from "@/components/article/prev-next";
@@ -88,66 +88,58 @@ export default async function ArticlePage({ params }: Props) {
         // Escape "<" so content can never close the script tag.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
-      <Container>
-        {/* Header */}
-        <header className="reveal grid gap-6 pt-12 pb-12 md:grid-cols-12 md:pt-20 md:pb-16">
-          <nav aria-label="Breadcrumb" className="font-mono text-xs text-muted md:col-span-12">
-            <ol className="flex flex-wrap gap-x-2">
+      {/* Header — centred, newsroom-style */}
+      <header>
+        <Container className="reveal pt-12 pb-10 text-center md:pt-20 md:pb-14">
+          <nav aria-label="Breadcrumb" className="t-body-sm text-muted">
+            <ol className="flex flex-wrap justify-center gap-x-2">
               <li>
-                <Link href={ieltsHref(`/${lang}/${section.id}`)} className="hover:text-fg">
+                <Link href={ieltsHref(`/${lang}/${section.id}`)} className="hover:text-link">
                   {section.title[lang]}
                 </Link>
               </li>
-              <li aria-hidden>/</li>
+              <li aria-hidden>›</li>
               <li>
-                <Link href={ieltsHref(`/${lang}/${section.id}/category/${category.id}`)} className="hover:text-fg">
+                <Link href={ieltsHref(`/${lang}/${section.id}/category/${category.id}`)} className="hover:text-link">
                   {category.title[lang]}
                 </Link>
               </li>
             </ol>
           </nav>
-          <div className="md:col-span-9">
-            <Eyebrow className="mb-4 text-accent-ink">
-              {contentTypeLabels[entry.type][lang]}
-              {"task" in entry && entry.task ? ` · Task ${entry.task}` : ""}
-            </Eyebrow>
-            <h1 className="text-4xl leading-[1.08] font-semibold tracking-[-0.03em] text-balance sm:text-5xl md:text-6xl">
-              {entry.title}
-            </h1>
-            <p className="mt-6 max-w-[56ch] font-body text-lg leading-relaxed text-muted">{entry.description}</p>
-          </div>
-          <dl className="grid grid-cols-2 gap-4 border-t border-rule pt-4 font-mono text-xs md:col-span-12 md:grid-cols-4">
-            <div>
-              <dt className="text-muted">{t.published}</dt>
-              <dd>
+          <p className="t-eyebrow mt-6 text-badge">
+            {contentTypeLabels[entry.type][lang]}
+            {"task" in entry && entry.task ? ` · Task ${entry.task}` : ""}
+          </p>
+          <h1 className="t-display mx-auto mt-2 max-w-[20ch]">{entry.title}</h1>
+          <p className="t-lede mx-auto mt-5 max-w-[36ch] text-muted">{entry.description}</p>
+
+          <dl className="t-body-sm mt-8 flex flex-wrap justify-center gap-x-8 gap-y-3 text-muted">
+            <div className="flex gap-1.5">
+              <dt>{t.published}</dt>
+              <dd className="text-ink">
                 <time dateTime={isoDate(entry.publishedAt)}>{formatDate(entry.publishedAt, lang)}</time>
               </dd>
             </div>
             {entry.updatedAt && (
-              <div>
-                <dt className="text-muted">{t.updated}</dt>
-                <dd>
+              <div className="flex gap-1.5">
+                <dt>{t.updated}</dt>
+                <dd className="text-ink">
                   <time dateTime={isoDate(entry.updatedAt)}>{formatDate(entry.updatedAt, lang)}</time>
                 </dd>
               </div>
             )}
-            <div>
-              <dt className="text-muted">{t.readingTime}</dt>
-              <dd>
+            <div className="flex gap-1.5">
+              <dt className="sr-only">{t.readingTime}</dt>
+              <dd className="text-ink">
                 {entry.readingMinutes} {t.minRead}
               </dd>
             </div>
             {translations.length > 0 && (
-              <div>
-                <dt className="text-muted">{t.language}</dt>
+              <div className="flex gap-1.5">
+                <dt>{t.language}</dt>
                 <dd className="flex gap-3">
                   {translations.map((tr) => (
-                    <Link
-                      key={tr.path}
-                      href={entryHref(tr)}
-                      hrefLang={tr.language}
-                      className="text-accent-ink underline underline-offset-4 hover:text-fg"
-                    >
+                    <Link key={tr.path} href={entryHref(tr)} hrefLang={tr.language} className="link">
                       {localeLabels[tr.language].long}
                     </Link>
                   ))}
@@ -156,33 +148,33 @@ export default async function ArticlePage({ params }: Props) {
             )}
           </dl>
           {entry.draft && (
-            <p className="border border-dashed border-accent px-3 py-2 font-mono text-xs text-accent-ink md:col-span-12">
-              {t.draft}
-            </p>
+            <p className="t-caption mt-6 inline-block rounded-full bg-surface px-3 py-1 text-muted">{t.draft}</p>
           )}
-        </header>
+        </Container>
+      </header>
 
+      <Container>
         {entry.coverImage && (
-          // Plain <img>: cover paths are author-supplied and may be external.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={entry.coverImage} alt="" className="mb-16 aspect-[2/1] w-full rounded-sm object-cover" />
+          <div className="mb-12 md:mb-16">
+            <Photo src={entry.coverImage} alt="" ratio="16/9" label="Cover image" priority />
+          </div>
         )}
 
         {/* Body + TOC */}
-        <div className="grid gap-12 md:grid-cols-12">
-          <aside className="order-first md:order-last md:col-span-3 md:col-start-10">
-            <div className="md:sticky md:top-8">
+        <div className="grid gap-10 md:grid-cols-[1fr_13rem] md:gap-14">
+          <aside className="order-first md:order-last">
+            <div className="md:sticky md:top-24">
               <TableOfContents headings={headings} label={t.onThisPage} />
             </div>
           </aside>
-          <div className="min-w-0 md:col-span-8">
+          <div className="min-w-0">
             {entry.type === "breakdown" && entry.prompt && (
-              <figure className="mb-10 max-w-(--container-prose) border-y border-rule py-5">
-                <figcaption className="mb-2 font-mono text-xs tracking-wider text-muted uppercase">
+              <figure className="mb-10 max-w-(--container-prose) rounded-[28px] bg-surface p-6 md:p-10">
+                <figcaption className="t-caption mb-3 text-badge">
                   {entry.task ? `Writing Task ${entry.task} · ` : ""}
                   {t.question}
                 </figcaption>
-                <blockquote lang="en" className="font-body text-[1.0625rem] leading-relaxed">
+                <blockquote lang="en" className="t-title">
                   {entry.prompt}
                 </blockquote>
               </figure>
@@ -194,26 +186,30 @@ export default async function ArticlePage({ params }: Props) {
                   href={entry.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm font-medium underline decoration-accent decoration-2 underline-offset-[6px] hover:text-accent-ink"
+                  className="btn btn-primary"
                 >
                   {t.visitResource} ↗
                 </a>
               </p>
             )}
-            <div className="mt-12 border-t border-rule pt-4">
-              <TagList tags={entry.tags} lang={lang} />
+            <div className="mt-12 border-t border-hairline pt-6">
+              <TagList tags={entry.tags} hrefFor={(tag) => ieltsHref(`/${lang}/tags/${tag}`)} />
             </div>
           </div>
         </div>
 
-        <div className="mt-20">
-          <PrevNext previous={previous} next={next} lang={lang} />
+        <div className="mt-12 md:mt-18">
+          <PrevNext
+            previous={previous && { href: entryHref(previous), title: previous.title }}
+            next={next && { href: entryHref(next), title: next.title }}
+            labels={{ previous: t.previous, next: t.next }}
+          />
         </div>
 
         {related.length > 0 && (
-          <section aria-labelledby="related" className="mt-16">
+          <section aria-labelledby="related" className="mt-12 md:mt-18">
             <SectionHeading id="related">{t.related}</SectionHeading>
-            <div className="mt-6">
+            <div className="mt-8">
               <EntryList entries={related} lang={lang} />
             </div>
           </section>

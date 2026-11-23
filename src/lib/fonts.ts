@@ -1,34 +1,24 @@
-import { Manrope, Inter, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 
-const manrope = Manrope({
-  subsets: ["latin", "latin-ext", "vietnamese"],
-  variable: "--font-manrope",
-  display: "swap",
-});
-
+/**
+ * Apple design system (docs/apple.DESIGN.md) specifies SF Pro Display / SF Pro Text.
+ * SF Pro cannot be self-hosted on the web (licence), so the font stack in globals.css is:
+ *   SF Pro (system font on Apple devices)  →  Inter with optical sizing (everyone else)
+ * Inter's `opsz` axis gives display-cut letterforms at large sizes, close to SF Pro Display.
+ * Both cover Vietnamese.
+ */
 const inter = Inter({
   subsets: ["latin", "latin-ext", "vietnamese"],
-  variable: "--font-inter",
+  axes: ["opsz"],
+  variable: "--font-inter-face",
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
+/** Code only (inside articles). */
+const mono = Geist_Mono({
   subsets: ["latin", "latin-ext", "vietnamese"],
-  variable: "--font-geist-mono",
+  variable: "--font-mono-face",
   display: "swap",
 });
 
-const instrumentSerif = Instrument_Serif({
-  weight: "400",
-  style: ["normal", "italic"],
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-instrument-serif",
-  display: "swap",
-});
-
-export const fontVariables = [
-  manrope.variable,
-  inter.variable,
-  geistMono.variable,
-  instrumentSerif.variable,
-].join(" ");
+export const fontVariables = [inter.variable, mono.variable].join(" ");

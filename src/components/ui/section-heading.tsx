@@ -1,28 +1,47 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { cx } from "@/lib/format";
 
-/** A ruled section header: label left, optional link right. */
+/** Section header: optional eyebrow, headline, and a "View all ›" link. */
 export function SectionHeading({
   children,
   href,
   linkLabel,
   id,
+  eyebrow,
+  className,
+  external = false,
 }: {
   children: ReactNode;
   href?: string;
   linkLabel?: string;
   id?: string;
+  eyebrow?: ReactNode;
+  className?: string;
+  /** Cross-site link: plain <a>. */
+  external?: boolean;
 }) {
-  return (
-    <div className="flex items-baseline justify-between gap-4 border-t border-fg pt-3">
-      <h2 id={id} className="font-mono text-xs tracking-[0.08em] uppercase">
-        {children}
-      </h2>
-      {href && linkLabel && (
-        <Link href={href} className="font-mono text-xs text-muted transition-colors hover:text-fg">
-          {linkLabel} →
+  const link =
+    href && linkLabel ? (
+      external ? (
+        <a href={href} className="link link-more">
+          {linkLabel}
+        </a>
+      ) : (
+        <Link href={href} className="link link-more">
+          {linkLabel}
         </Link>
-      )}
+      )
+    ) : null;
+  return (
+    <div className={cx("flex flex-wrap items-end justify-between gap-x-8 gap-y-3", className)}>
+      <div>
+        {eyebrow && <p className="t-eyebrow mb-2 text-muted">{eyebrow}</p>}
+        <h2 id={id} className="t-headline">
+          {children}
+        </h2>
+      </div>
+      {link}
     </div>
   );
 }

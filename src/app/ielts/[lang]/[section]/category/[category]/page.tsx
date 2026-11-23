@@ -50,15 +50,17 @@ export default async function CategoryPage({ params }: Props) {
   );
 
   return (
-    <Container>
+    <>
       <PageIntro
-        eyebrow={`${section.title[lang]} · ${countLabel(lang, entries.length)}`}
-        title={category.title[lang]}
-      />
+      eyebrow={`${section.title[lang]} · ${countLabel(lang, entries.length)}`}
+      title={category.title[lang]}
+    />
+      <Container>
       <div className="pb-8">
         <CategoryFilter lang={lang} section={section.id} active={category.id} counts={counts} />
       </div>
       <EntryList entries={entries} lang={lang} />
-    </Container>
+      </Container>
+    </>
   );
 }

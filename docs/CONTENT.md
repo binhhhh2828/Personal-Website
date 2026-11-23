@@ -16,7 +16,19 @@ content/
 Sub-folders exist only to keep things organised. Files whose names start with `_` are ignored.
 A piece's URL comes from its front-matter: `/{language}/{section of category}/{slug}`.
 
-The personal site's placeholder data is in `src/config/profile.ts`.
+## Personal site
+
+| What | Where |
+| --- | --- |
+| Name, headline, intro, works, explorations, beyond-work, contact | `src/config/profile.ts` |
+| Life story (About page): one `<Chapter>` per period, each with a photo frame | `content/pages/main/about.mdx` |
+| Journal notes (`/journal/{slug}`) | `content/journal/*.mdx` |
+| Photos | `public/images/…` (see `public/images/README.md`) |
+
+The homepage reads the chapter titles from `about.mdx` automatically and links to each chapter.
+
+Journal front-matter: `title`, `slug`, `description` and `publishedAt` are required. `updatedAt`, `tags`,
+`language` (`en` or `vi`, default `en`), `coverImage` and `draft` are optional.
 
 ## Front-matter
 
@@ -54,6 +66,12 @@ Translations are optional. A piece can exist in only one language.
 <Compare before="Weaker sentence" after="Stronger sentence" note="Why" beforeLabel="Trước" afterLabel="Sau" />
 
 <Placeholder>Content still to be written</Placeholder>
+
+<Photo src="/images/notes/desk.jpg" alt="My desk" caption="Optional caption" ratio="16/9" />
+
+<Chapter id="childhood" eyebrow="1998–2010" title="Childhood" image="/images/about/childhood.jpg">
+Markdown text…
+</Chapter>
 ```
 
 These also work: GitHub-flavoured Markdown tables, `##`/`###` headings (which build the "On this page" table of contents), and links.

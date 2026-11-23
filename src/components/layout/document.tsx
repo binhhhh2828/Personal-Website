@@ -14,7 +14,7 @@ export function Document({
 }) {
   return (
     <html lang={lang} className={`${fontVariables} antialiased`}>
-      <body className="flex min-h-dvh flex-col bg-bg text-fg">
+      <body className="flex min-h-dvh flex-col bg-canvas text-body">
         <SkipLink label={skipLabel} />
         {children}
       </body>

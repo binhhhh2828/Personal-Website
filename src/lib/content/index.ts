@@ -37,7 +37,7 @@ function walk(dir: string): string[] {
   });
 }
 
-function readingMinutes(body: string) {
+export function readingMinutes(body: string) {
   const words = body
     .replace(/```[\s\S]*?```/g, " ")
     .replace(/<[^>]+>/g, " ")
@@ -210,9 +210,16 @@ const PAGES_ROOT = path.join(process.cwd(), "content", "pages");
 
 export type PageContent = { title: string; description: string; body: string };
 
-/** Loads content/pages/{site}/{lang}/{name}.mdx, or undefined if it does not exist. */
-export function getPageContent(siteKey: "ielts", lang: Locale, name: string): PageContent | undefined {
-  const file = path.join(PAGES_ROOT, siteKey, lang, `${name}.mdx`);
+/**
+ * Loads a standalone MDX page:
+ *  - IELTS:     content/pages/ielts/{lang}/{name}.mdx
+ *  - personal:  content/pages/main/{name}.mdx
+ * Returns undefined if the file does not exist.
+ */
+export function getPageContent(siteKey: "ielts", lang: Locale, name: string): PageContent | undefined;
+export function getPageContent(siteKey: "main", lang: null, name: string): PageContent | undefined;
+export function getPageContent(siteKey: "ielts" | "main", lang: Locale | null, name: string): PageContent | undefined {
+  const file = path.join(PAGES_ROOT, siteKey, ...(lang ? [lang] : []), `${name}.mdx`);
   if (!fs.existsSync(file)) return undefined;
   const { data, content } = matter(fs.readFileSync(file, "utf8"));
   return { title: String(data.title ?? ""), description: String(data.description ?? ""), body: content };

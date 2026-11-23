@@ -1,47 +1,66 @@
 import type { Metadata } from "next";
-import { ieltsHrefFromMain } from "@/config/site";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 import { profile } from "@/config/profile";
 import { Container } from "@/components/ui/container";
+import { Photo } from "@/components/ui/photo";
 import { PageIntro } from "@/components/article/page-intro";
+import { MdxContent } from "@/components/mdx/mdx-content";
+import { getPageContent } from "@/lib/content";
+import { getStoryChapters } from "@/lib/content/chapters";
 import { mainMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = mainMetadata({
-  title: "About",
-  description: profile.about[0],
-  path: "/about",
-});
+const page = () => getPageContent("main", null, "about");
 
+export function generateMetadata(): Metadata {
+  const p = page();
+  return mainMetadata({ title: p?.title ?? "About", description: p?.description ?? profile.intro, path: "/about" });
+}
+
+/** The life story: chapters written in content/pages/main/about.mdx. */
 export default function AboutPage() {
+  const p = page();
+  if (!p) notFound();
+  const chapters = getStoryChapters();
+
   return (
-    <Container>
-      <PageIntro title="About" />
-      <div className="grid gap-12 md:grid-cols-12">
-        <div className="prose md:col-span-7">
-          {profile.about.map((p) => (
-            <p key={p}>{p}</p>
-          ))}
-          <p>
-            I also keep <a href={ieltsHrefFromMain("/")}>IELTS Writing Lab</a>, a bilingual notebook on writing and
-            language learning.
-          </p>
+    <>
+      <PageIntro center eyebrow={profile.name} title={p.title} description={p.description} />
+
+      <Container>
+        <Photo src={profile.portrait} alt={`Portrait of ${profile.name}`} ratio="16/9" label="Portrait" priority />
+      </Container>
+
+      {chapters.length > 1 && (
+        <Container className="mt-10">
+          <nav aria-label="Chapters" className="flex flex-wrap justify-center gap-2">
+            {chapters.map((c) => (
+              <a key={c.id} href={`#${c.id}`} className="btn btn-chip">
+                {c.title}
+              </a>
+            ))}
+          </nav>
+        </Container>
+      )}
+
+      <Container className="mt-6">
+        <MdxContent source={p.body} variant="story" />
+      </Container>
+
+      <Container className="text-center">
+        <div className="tile px-7 py-14 md:py-16">
+          <h2 className="t-headline">Thanks for reading.</h2>
+          <p className="t-lede mx-auto mt-4 max-w-[30ch] text-muted">See what I’m making, or say hello.</p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
+            <Link href="/projects" className="btn btn-primary">
+              See my work
+            </Link>
+            <Link href="/#contact" className="link link-more">
+              Get in touch
+            </Link>
+          </div>
         </div>
-        <aside className="md:col-span-3 md:col-start-10">
-          <p className="mb-3 font-mono text-xs tracking-[0.08em] text-muted uppercase">Elsewhere</p>
-          {profile.links.length === 0 ? (
-            <p className="font-mono text-xs text-muted">[Placeholder] Add links in src/config/profile.ts</p>
-          ) : (
-            <ul className="space-y-2 text-sm">
-              {profile.links.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href} className="underline decoration-rule underline-offset-4 hover:decoration-fg">
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
-        </aside>
-      </div>
-    </Container>
+      </Container>
+    </>
   );
 }

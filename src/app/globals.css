@@ -1,143 +1,399 @@
 @import "tailwindcss";
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Design tokens — shared by the personal site and IELTS Writing Lab.
-   Swiss editorial minimalism: one background, one ink, one muted, one accent.
+   Design tokens — Apple design system (docs/apple.DESIGN.md).
+   Shared by the personal site and IELTS Writing Lab.
+   White canvas, #F5F5F7 colour-blocked surfaces, one electric blue, no shadows.
    ────────────────────────────────────────────────────────────────────────── */
 :root {
-  --bg: #f7f7f5;
-  --fg: #191919;
-  /* #A5A5A0 is the brand secondary. It fails WCAG AA for body text (≈2.3:1),
-     so it is used for rules, decoration and large/meta text only.
-     --fg-muted is a darker step of the same hue for readable secondary text. */
-  --fg-subtle: #a5a5a0;
-  --fg-muted: #6b6b66;
-  --accent: #7896b5;
-  /* Darker accent for text links on --bg (≥4.5:1). */
-  --accent-ink: #4a6a8c;
-  --rule: #e4e4df;
-  --surface: #efefeb;
+  --canvas: #ffffff;
+  --surface: #f5f5f7;
+  --surface-raised: #ebebed;
+  --ink: #000000; /* headings */
+  --body: #1d1d1f; /* body copy */
+  --muted: #6e6e73; /* captions, secondary text (≈5:1 on white) */
+  --faint: #86868b; /* placeholders, tertiary (≈3.6:1 — large/meta text only) */
+  --hairline: #d2d2d7;
+
+  --primary: #0071e3; /* CTAs, focus ring */
+  --accent: #2997ff; /* links on dark */
+  --link: #0066cc; /* links on light (spec accent-1; ≈5.6:1 — #2997FF is only 3:1 on white) */
+  --badge: #b64400; /* decorative eyebrow / badge text */
+
+  --black: #000000; /* dark hero tiles */
+  --on-black: #f5f5f7;
+  --on-black-muted: #a1a1a6;
+
+  --nav: rgba(29, 29, 31, 0.8);
 }
 
 @theme inline {
-  --color-bg: var(--bg);
-  --color-fg: var(--fg);
-  --color-subtle: var(--fg-subtle);
-  --color-muted: var(--fg-muted);
-  --color-accent: var(--accent);
-  --color-accent-ink: var(--accent-ink);
-  --color-rule: var(--rule);
+  --color-canvas: var(--canvas);
   --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-ink: var(--ink);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-hairline: var(--hairline);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-link: var(--link);
+  --color-badge: var(--badge);
+  --color-black: var(--black);
+  --color-on-black: var(--on-black);
+  --color-on-black-muted: var(--on-black-muted);
+  --color-nav: var(--nav);
 
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-serif: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: "SF Pro Text", -apple-system, BlinkMacSystemFont, var(--font-inter-face), "Segoe UI", system-ui,
+    sans-serif;
+  --font-display: "SF Pro Display", -apple-system, BlinkMacSystemFont, var(--font-inter-face), "Segoe UI",
+    system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, monospace;
 
-  --container-prose: 68ch;
-  --container-page: 76rem;
+  /* Radius scale: 0 (structure) · 8 · 11 · 28 (feature cards, images) · full (pills) */
+  --radius-xs: 8px;
+  --radius-sm: 11px;
+  --radius-md: 28px;
+
+  --container-content: 61.25rem; /* 980px */
+  --container-nav: 64rem; /* 1024px */
+  --container-prose: 40rem; /* ~68ch at 19px */
 }
 
 @layer base {
   html {
-    background: var(--bg);
-    color: var(--fg);
+    background: var(--canvas);
     -webkit-text-size-adjust: 100%;
-    text-rendering: optimizeLegibility;
+    scroll-padding-top: 7rem;
   }
   body {
-    background: var(--bg);
-    color: var(--fg);
+    background: var(--canvas);
+    color: var(--body);
     font-family: var(--font-sans);
-    font-feature-settings: "ss01", "cv11";
+    font-size: 17px;
+    line-height: 1.47;
+    letter-spacing: -0.022em; /* −0.37px at 17px */
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   ::selection {
-    background: color-mix(in srgb, var(--accent) 30%, transparent);
+    background: color-mix(in srgb, var(--primary) 22%, transparent);
   }
   :focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 3px;
-    border-radius: 2px;
-  }
-  a {
-    text-underline-offset: 0.2em;
-    text-decoration-thickness: 1px;
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 }
 
-/* Editorial display face. Instrument Serif has no Vietnamese glyphs,
-   so Vietnamese pages fall back to Manrope instead of mixing fonts mid-word. */
-.font-display {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  letter-spacing: -0.01em;
-}
-.font-display:lang(vi) {
-  font-family: var(--font-sans);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-}
-
-/* Subtle entrance — the only animation on the site. */
-@media (prefers-reduced-motion: no-preference) {
-  .reveal {
-    animation: reveal 600ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+/* ── Typography roles (spec §3) ─────────────────────────────────────────── */
+@layer components {
+  /* Hero: Display XS 40 → Display LG 64 → Display XL 80 */
+  .t-hero {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 1.1;
+    letter-spacing: 0;
+    color: var(--ink);
+    text-wrap: balance;
   }
-  @keyframes reveal {
-    from {
-      opacity: 0;
-      transform: translateY(6px);
+  /* Page headline: Display XS 40 → Display SM 48 → Display MD 56 */
+  .t-display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 1.1;
+    letter-spacing: 0;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  /* Section heading: Heading XL 32 → Display XS 40 → Display SM 48 */
+  .t-headline {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 1.13;
+    letter-spacing: 0.004em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  @media (min-width: 768px) {
+    .t-hero {
+      font-size: 64px;
+      line-height: 1.06;
+      letter-spacing: -0.009em;
     }
+    .t-display {
+      font-size: 48px;
+      line-height: 1.08;
+      letter-spacing: -0.003em;
+    }
+    .t-headline {
+      font-size: 40px;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+  }
+  @media (min-width: 1068px) {
+    .t-hero {
+      font-size: 80px;
+      line-height: 1.05;
+      letter-spacing: -0.015em; /* −1.2px */
+    }
+    .t-display {
+      font-size: 56px;
+      line-height: 1.07;
+      letter-spacing: -0.005em; /* −0.28px */
+    }
+    .t-headline {
+      font-size: 48px;
+      line-height: 1.08;
+      letter-spacing: -0.003em;
+    }
+  }
+  /* Intro / lede: Heading LG 21 → 28 (weight 400) */
+  .t-lede {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 21px;
+    line-height: 1.38;
+    letter-spacing: 0.011em;
+    color: var(--body);
+  }
+  @media (min-width: 1068px) {
+    .t-lede {
+      font-size: 28px;
+      line-height: 1.14;
+      letter-spacing: 0.007em;
+    }
+  }
+  /* Card / list titles: Heading SM 19 → Heading MD 24 */
+  .t-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 19px;
+    line-height: 1.21;
+    letter-spacing: 0.012em;
+    color: var(--ink);
+  }
+  @media (min-width: 1068px) {
+    .t-title {
+      font-size: 24px;
+      line-height: 1.17;
+      letter-spacing: 0.009em;
+    }
+  }
+  .t-body-sm {
+    font-size: 14px;
+    line-height: 1.43;
+    letter-spacing: -0.016em;
+  }
+  .t-caption {
+    font-size: 12px;
+    line-height: 1.33;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  /* Eyebrow above headlines (Heading SM weight, muted or decorative badge colour) */
+  .t-eyebrow {
+    font-family: var(--font-display);
+    font-size: 17px;
+    line-height: 1.24;
+    font-weight: 600;
+    letter-spacing: -0.022em;
+  }
+  @media (min-width: 1068px) {
+    .t-eyebrow {
+      font-size: 21px;
+      line-height: 1.19;
+      letter-spacing: 0.011em;
+    }
+  }
+
+  /* ── Buttons: pills for primary/secondary actions (spec §4) ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-radius: 9999px;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    transition:
+      background-color 200ms ease,
+      color 200ms ease,
+      border-color 200ms ease,
+      opacity 200ms ease;
+  }
+  .btn-primary {
+    min-height: 44px;
+    padding: 11px 21px;
+    font-size: 17px;
+    line-height: 1.18;
+    letter-spacing: -0.022em;
+    background: var(--primary);
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: #0077ed;
+  }
+  .btn-outline {
+    min-height: 44px;
+    padding: 11px 21px;
+    font-size: 17px;
+    line-height: 1.18;
+    letter-spacing: -0.022em;
+    background: transparent;
+    color: var(--link);
+    border-color: var(--link);
+  }
+  .btn-outline:hover {
+    background: var(--link);
+    color: #fff;
+  }
+  .on-black .btn-outline {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .on-black .btn-outline:hover {
+    background: var(--accent);
+    color: #000;
+  }
+  /* Chips: filters, tags, small actions (filled small light, pill) */
+  .btn-chip {
+    min-height: 36px;
+    padding: 8px 15px;
+    font-size: 14px;
+    line-height: 1.29;
+    letter-spacing: -0.016em;
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .btn-chip:hover {
+    background: var(--surface-raised);
+  }
+  .btn-chip[aria-current="page"],
+  .btn-chip[aria-current="true"] {
+    background: var(--body);
+    color: #fff;
+  }
+  .on-black .btn-chip {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--on-black);
+  }
+  .on-black .btn-chip:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* ── Links: "Learn more ›" style and inline ── */
+  .link {
+    color: var(--link);
+    text-decoration: none;
+  }
+  .link:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+  .on-black .link {
+    color: var(--accent);
+  }
+  .link-more::after {
+    content: "›";
+    display: inline-block;
+    margin-left: 0.25em;
+    transform: translateY(-0.02em);
+  }
+
+  /* ── Surfaces: colour-blocked, no shadows ── */
+  .tile {
+    background: var(--surface);
+    border-radius: 28px;
+    overflow: hidden;
+  }
+  .tile-link {
+    transition: transform 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .tile-link:hover {
+    transform: scale(1.01);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tile-link:hover {
+      transform: none;
+    }
+  }
+  .on-black {
+    background: var(--black);
+    color: var(--on-black);
+  }
+  .on-black .t-hero,
+  .on-black .t-display,
+  .on-black .t-headline,
+  .on-black .t-title {
+    color: var(--on-black);
+  }
+  .on-black .t-lede {
+    color: var(--on-black-muted);
   }
 }
 
 /* ── Long-form reading ───────────────────────────────────────────────────── */
 .prose {
-  font-family: var(--font-body);
-  font-size: 1.0625rem;
-  line-height: 1.75;
-  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.6;
+  letter-spacing: -0.022em;
+  color: var(--body);
   max-width: var(--container-prose);
 }
-.prose > * + * {
-  margin-top: 1.25em;
+@media (min-width: 768px) {
+  .prose {
+    font-size: 19px;
+    line-height: 1.58;
+    letter-spacing: -0.012em;
+  }
 }
-.prose h2,
-.prose h3 {
-  font-family: var(--font-sans);
-  letter-spacing: -0.02em;
-  scroll-margin-top: 6rem;
+.prose > * + * {
+  margin-top: 1.05em;
 }
 .prose h2 {
-  font-size: 1.5rem;
-  line-height: 1.25;
+  font-family: var(--font-display);
   font-weight: 600;
-  margin-top: 2.5em;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--rule);
+  font-size: 28px;
+  line-height: 1.14;
+  letter-spacing: 0.007em;
+  color: var(--ink);
+  margin-top: 2em;
 }
 .prose h3 {
-  font-size: 1.1875rem;
+  font-family: var(--font-display);
   font-weight: 600;
-  margin-top: 2em;
+  font-size: 21px;
+  line-height: 1.19;
+  color: var(--ink);
+  margin-top: 1.6em;
 }
 .prose h2 + *,
 .prose h3 + * {
-  margin-top: 0.75em;
+  margin-top: 0.6em;
 }
 .prose a {
-  color: var(--accent-ink);
-  text-decoration: underline;
+  color: var(--link);
 }
 .prose a:hover {
-  color: var(--fg);
+  text-decoration: underline;
 }
 .prose strong {
   font-weight: 600;
+  color: var(--ink);
 }
 .prose ul,
 .prose ol {
-  padding-left: 1.25em;
+  padding-left: 1.2em;
 }
 .prose ul {
   list-style: disc;
@@ -146,31 +402,36 @@
   list-style: decimal;
 }
 .prose li + li {
-  margin-top: 0.4em;
+  margin-top: 0.35em;
 }
 .prose li::marker {
-  color: var(--fg-subtle);
+  color: var(--faint);
 }
 .prose blockquote {
-  border-left: 2px solid var(--accent);
-  padding-left: 1.25em;
-  color: var(--fg-muted);
-  font-style: italic;
+  font-family: var(--font-display);
+  font-size: 1.2em;
+  line-height: 1.35;
+  color: var(--ink);
+  padding-left: 1em;
+  border-left: 3px solid var(--hairline);
 }
 .prose code {
   font-family: var(--font-mono);
-  font-size: 0.875em;
+  font-size: 0.85em;
   background: var(--surface);
-  padding: 0.1em 0.35em;
-  border-radius: 3px;
+  padding: 0.12em 0.4em;
+  border-radius: 8px;
+  letter-spacing: 0;
 }
 .prose pre {
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: 14px;
+  line-height: 1.6;
   background: var(--surface);
-  padding: 1rem 1.25rem;
+  padding: 20px 24px;
+  border-radius: 11px;
   overflow-x: auto;
-  border-radius: 4px;
+  letter-spacing: 0;
 }
 .prose pre code {
   background: none;
@@ -178,31 +439,39 @@
 }
 .prose hr {
   border: 0;
-  border-top: 1px solid var(--rule);
+  border-top: 1px solid var(--hairline);
   margin: 2.5em 0;
 }
 .prose table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9375rem;
+  font-size: 15px;
+  line-height: 1.45;
   display: block;
   overflow-x: auto;
 }
 .prose th,
 .prose td {
   text-align: left;
-  padding: 0.6em 0.8em 0.6em 0;
-  border-bottom: 1px solid var(--rule);
+  padding: 12px 16px 12px 0;
+  border-bottom: 1px solid var(--hairline);
   vertical-align: top;
 }
 .prose th {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--fg-muted);
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
 }
-.prose img {
-  border-radius: 4px;
+
+/* Quiet entrance on hero content only. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    animation: reveal 800ms cubic-bezier(0.25, 0.1, 0.25, 1) both;
+  }
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
 }

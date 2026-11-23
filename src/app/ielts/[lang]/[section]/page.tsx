@@ -44,12 +44,13 @@ export default async function SectionPage({ params }: Props) {
   const intro = getPageContent("ielts", lang, section.id);
 
   return (
-    <Container>
+    <>
       <PageIntro
-        eyebrow={countLabel(lang, entries.length)}
-        title={section.title[lang]}
-        description={section.description[lang]}
-      />
+      eyebrow={countLabel(lang, entries.length)}
+      title={section.title[lang]}
+      description={section.description[lang]}
+    />
+      <Container>
       {intro && (
         <div className="pb-16 md:grid md:grid-cols-12">
           <div className="md:col-span-8">
@@ -61,6 +62,7 @@ export default async function SectionPage({ params }: Props) {
         <CategoryFilter lang={lang} section={section.id} counts={counts} />
       </div>
       <EntryList entries={entries} lang={lang} />
-    </Container>
+      </Container>
+    </>
   );
 }

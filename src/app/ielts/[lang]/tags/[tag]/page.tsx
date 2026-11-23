@@ -41,9 +41,11 @@ export default async function TagPage({ params }: Props) {
   if (entries.length === 0) notFound();
 
   return (
-    <Container>
+    <>
       <PageIntro eyebrow={`${t.taggedWith} · ${countLabel(lang, entries.length)}`} title={`#${tag}`} />
+      <Container>
       <EntryList entries={entries} lang={lang} />
-    </Container>
+      </Container>
+    </>
   );
 }

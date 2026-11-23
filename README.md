@@ -23,7 +23,7 @@ npm run dev          # http://localhost:3000  and  http://localhost:3000/ielts
 ## Structure
 
 ```
-content/              MDX: IELTS pieces, IELTS pages, templates
+content/              MDX: IELTS pieces, journal notes, About story, templates
 docs/                 ROUTING.md · CONTENT.md · DEPLOYMENT.md
 src/proxy.ts          host-based routing (ielts.* → /ielts)
 src/config/           site + domains, i18n, navigation, content taxonomy, profile placeholders
@@ -34,21 +34,40 @@ src/app/(main)/       personal site (root layout)
 src/app/ielts/[lang]/ IELTS site (root layout, vi | en)
 ```
 
-## Design tokens
+## Design system
 
-These are defined in `src/app/globals.css`:
+The source of truth is [`docs/apple.DESIGN.md`](docs/apple.DESIGN.md) (the earlier `mercury.DESIGN.md` is kept for reference only).
+It's implemented in `src/app/globals.css` as tokens plus a small set of classes:
+
+- **Type roles:** `t-hero`, `t-display`, `t-headline`, `t-lede`, `t-title`, `t-eyebrow`, `t-body-sm`, `t-caption`
+- **Buttons:** `btn-primary`, `btn-outline`, `btn-chip`
+- **Links:** `link`, `link-more`
+- **Surfaces:** `tile`, `tile-link`, `on-black`
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `bg` | `#F7F7F5` | page background |
-| `fg` | `#191919` | primary text |
-| `subtle` | `#A5A5A0` | brand secondary: rules, numerals, decoration |
-| `muted` | `#6B6B66` | secondary **text** (the darker step keeps it readable, WCAG AA) |
-| `accent` | `#7896B5` | accent marks, underlines, focus ring |
-| `accent-ink` | `#4A6A8C` | accent-coloured **text** and links (WCAG AA) |
+| `canvas` / `surface` | `#FFFFFF` / `#F5F5F7` | page / colour-blocked bands, tiles, footer |
+| `ink` / `body` | `#000000` / `#1D1D1F` | headings / body copy |
+| `muted` / `faint` | `#6E6E73` / `#86868B` | secondary text / placeholders and meta |
+| `hairline` | `#D2D2D7` | dividers |
+| `primary` | `#0071E3` | primary pill buttons, focus ring |
+| `link` / `accent` | `#0066CC` / `#2997FF` | links on white / links on black |
+| `badge` | `#B64400` | decorative eyebrows (sparingly) |
+| `nav` | `rgba(29,29,31,.8)` | translucent global navigation |
 
-The fonts are Manrope (UI and headings), Inter (long-form reading), Geist Mono (metadata) and Instrument Serif
-(editorial display, English only, because the font has no Vietnamese glyphs; Vietnamese headings fall back to Manrope).
+- **No shadows anywhere.** Depth comes from colour blocking (white → `#F5F5F7` → black tiles).
+- **Shapes:** buttons are pills, feature tiles and photos have 28px corners, and structural blocks have square corners.
+- **Width:** content is 980px wide.
+
+**Fonts:** SF Pro can't be self-hosted, so the stack is SF Pro (the system font on Apple devices), then **Inter with optical sizing**
+for everyone else. Both support Vietnamese. Geist Mono is used for code only.
+
+**Navigation:**
+- A dark global bar (the personal brand) appears on both sites.
+- IELTS adds a light, sticky product bar underneath it, in the style of Apple's product pages.
+
+**Photos:** `<Photo>` shows an image if the file exists under `/public`, and otherwise shows a labelled empty frame.
+See `public/images/README.md` for every slot.
 
 ## Not in the MVP
 

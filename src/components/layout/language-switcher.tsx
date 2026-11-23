@@ -6,7 +6,7 @@ import { localeLabels, locales, type Locale } from "@/config/i18n";
 import { cx } from "@/lib/format";
 
 /**
- * Switches language on the IELTS site.
+ * Switches language on the IELTS site, styled as a small segmented pill.
  * `basePath` is "" on the subdomain or "/ielts" in path mode.
  * `switchMap` (built on the server) handles content pages whose URL differs per language;
  * every other page keeps its path and swaps the language segment.
@@ -32,31 +32,22 @@ export function LanguageSwitcher({
   }
 
   return (
-    <nav aria-label={label} className="flex items-center gap-1 font-mono text-xs">
-      {locales.map((l, i) => (
-        <span key={l} className="flex items-center gap-1">
-          {i > 0 && (
-            <span aria-hidden className="text-subtle">
-              /
-            </span>
-          )}
-          {l === lang ? (
-            <span aria-current="true" className="text-fg">
-              {localeLabels[l].short}
-            </span>
-          ) : (
-            <Link
-              href={hrefFor(l)}
-              hrefLang={l}
-              lang={l}
-              title={localeLabels[l].long}
-              className={cx("text-muted transition-colors hover:text-fg")}
-            >
-              {localeLabels[l].short}
-            </Link>
-          )}
-        </span>
-      ))}
+    <nav aria-label={label} className="flex h-7 items-center rounded-full bg-surface p-0.5 text-[12px] font-semibold">
+      {locales.map((l) => {
+        const cls = cx(
+          "flex h-6 min-w-8 items-center justify-center rounded-full px-2 transition-colors",
+          l === lang ? "bg-body text-white" : "text-muted hover:text-ink",
+        );
+        return l === lang ? (
+          <span key={l} aria-current="true" className={cls}>
+            {localeLabels[l].short}
+          </span>
+        ) : (
+          <Link key={l} href={hrefFor(l)} hrefLang={l} lang={l} title={localeLabels[l].long} className={cls}>
+            {localeLabels[l].short}
+          </Link>
+        );
+      })}
     </nav>
   );
 }

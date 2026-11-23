@@ -26,13 +26,15 @@ export default async function AboutPage({ params }: Props) {
   if (!page) notFound();
 
   return (
-    <Container>
+    <>
       <PageIntro title={page.title} />
+      <Container>
       <div className="md:grid md:grid-cols-12">
         <div className="md:col-span-8">
           <MdxContent source={page.body} />
         </div>
       </div>
-    </Container>
+      </Container>
+    </>
   );
 }

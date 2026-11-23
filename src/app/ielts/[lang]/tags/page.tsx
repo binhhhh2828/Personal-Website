@@ -26,25 +26,27 @@ export default async function TagsPage({ params }: Props) {
   const tags = getTags(lang);
 
   return (
-    <Container>
+    <>
       <PageIntro title={t.allTags} />
+      <Container>
       {tags.length === 0 ? (
-        <p className="border-t border-rule py-8 font-mono text-sm text-muted">{t.empty}</p>
+        <p className="tile px-6 py-10 text-center text-muted">{t.empty}</p>
       ) : (
-        <ul className="grid border-t border-rule sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="flex flex-wrap gap-2">
           {tags.map(({ tag, count }) => (
-            <li key={tag} className="border-b border-rule">
+            <li key={tag}>
               <Link
                 href={ieltsHref(`/${lang}/tags/${tag}`)}
-                className="flex items-baseline justify-between py-4 pr-6 font-mono text-sm hover:text-accent-ink"
+                className="btn btn-chip"
               >
                 #{tag}
-                <span className="text-xs text-muted">{count}</span>
+                <span className="opacity-60">{count}</span>
               </Link>
             </li>
           ))}
         </ul>
       )}
-    </Container>
+      </Container>
+    </>
   );
 }

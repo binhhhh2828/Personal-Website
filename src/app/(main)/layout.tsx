@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import "../globals.css";
-import { ieltsHrefFromMain, site } from "@/config/site";
+import { site } from "@/config/site";
 import { Document } from "@/components/layout/document";
-import { MainHeader } from "@/components/layout/main-header";
+import { GlobalNav } from "@/components/layout/global-nav";
 import { SiteFooter } from "@/components/layout/site-footer";
 
-export const viewport: Viewport = { themeColor: "#F7F7F5" };
+export const viewport: Viewport = { themeColor: "#ffffff" };
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.mainUrl),
@@ -17,11 +17,11 @@ export const metadata: Metadata = {
 export default function MainLayout({ children }: LayoutProps<"/">) {
   return (
     <Document lang={site.locale}>
-      <MainHeader />
+      <GlobalNav from="main" sticky />
       <main id="main" className="flex-1">
         {children}
       </main>
-      <SiteFooter mainHref="/" ieltsHref={ieltsHrefFromMain("/")} />
+      <SiteFooter from="main" />
     </Document>
   );
 }
