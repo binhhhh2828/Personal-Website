@@ -108,7 +108,7 @@ function Photo({ src, alt, caption, ratio = "16/9" }: { src: string; alt: string
 }
 
 /**
- * <Chapter id="childhood" eyebrow="1998–2010" title="Childhood" image="/images/about/childhood.jpg">
+ * <Chapter id="childhood" eyebrow="1998–2010" title="Childhood" image="/images/about/childhood.jpg" album="childhood">
  *   Markdown…
  * </Chapter>
  * A chapter of the life story: a full-bleed photo that dissolves into the text beside it.
@@ -120,6 +120,7 @@ function Chapter({
   title,
   image,
   imageAlt,
+  album,
   children,
 }: {
   id?: string;
@@ -127,6 +128,8 @@ function Chapter({
   title: string;
   image?: string;
   imageAlt?: string;
+  /** Gallery album slug — adds an "Open the album" link to /gallery#slug. */
+  album?: string;
   children: ReactNode;
 }) {
   const body = (
@@ -136,6 +139,11 @@ function Chapter({
         {title}
       </h2>
       <div className="prose mt-6 [&>*:first-child]:mt-0">{children}</div>
+      {album && (
+        <Link href={`/gallery#${album}`} className="link link-more mt-6 inline-block">
+          Open the album
+        </Link>
+      )}
     </>
   );
   if (!image) {

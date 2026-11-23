@@ -68,7 +68,7 @@ export default function Home() {
 
       {/* 2 · About — the photo swaps sides; the grey band melts in and out */}
       <div className="band-soft">
-        <Split side="left" image="/images/home/about.jpg" alt="About me" label="About" labelledBy="about">
+        <Split side="left" image="/images/home/about.jpg" alt="Me as a kid, smiling on a pillow" label="About" labelledBy="about">
           <p className="t-eyebrow text-badge">About</p>
           <h2 id="about" className="t-headline mt-2">
             {profile.role}

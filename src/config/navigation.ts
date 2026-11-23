@@ -23,6 +23,7 @@ export function globalNav(from: From): NavItem[] {
     { ...main("/projects"), label: "Projects" },
     { ...main("/research"), label: "Research" },
     { ...main("/journal"), label: "Journal" },
+    { ...main("/gallery"), label: "Gallery" },
     from === "main"
       ? { label: "IELTS", href: ieltsHrefFromMain("/"), crossSite: true }
       : { label: "IELTS", href: ieltsHref("/") },

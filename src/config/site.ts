@@ -17,12 +17,12 @@ const ieltsEnvUrl = trimSlash(process.env.NEXT_PUBLIC_IELTS_URL || "");
 export const IELTS_PATH_PREFIX = "/ielts";
 
 export const site = {
-  /** Brand name shared by both sites. Replace with your real name. */
-  name: "[Your Name]",
+  /** Brand name shared by both sites. */
+  name: "Lại Bình",
   /** Short wordmark used in navigation. */
-  wordmark: "[Your Name]",
+  wordmark: "Lại Bình",
   description:
-    "[Placeholder] Personal website — technology, research, product building, language and learning.",
+    "Lại Bình — an IT student at KMA who writes things down: code, diaries, strange dreams and an English-learning journey.",
   mainUrl,
   locale: "en",
 } as const;

@@ -43,3 +43,6 @@ next-env.d.ts
 
 # local editor/tool config
 .claude/
+
+# private photo originals: NEVER commit (only the encrypted output in public/gallery is published)
+/private/
