@@ -1,0 +1,70 @@
+/**
+ * Domain + brand configuration. Single source of truth for every absolute URL.
+ *
+ * Two modes, chosen by NEXT_PUBLIC_IELTS_URL at build time:
+ *  - path mode      (env empty):  IELTS lives at  {MAIN_URL}/ielts/...
+ *  - subdomain mode (env set):    IELTS lives at  {IELTS_URL}/...
+ * See docs/ROUTING.md.
+ */
+
+function trimSlash(url: string) {
+  return url.replace(/\/+$/, "");
+}
+
+const mainUrl = trimSlash(process.env.NEXT_PUBLIC_MAIN_URL || "http://localhost:3000");
+const ieltsEnvUrl = trimSlash(process.env.NEXT_PUBLIC_IELTS_URL || "");
+
+export const IELTS_PATH_PREFIX = "/ielts";
+
+export const site = {
+  /** Brand name shared by both sites. Replace with your real name. */
+  name: "[Your Name]",
+  /** Short wordmark used in navigation. */
+  wordmark: "[Your Name]",
+  description:
+    "[Placeholder] Personal website — technology, research, product building, language and learning.",
+  mainUrl,
+  locale: "en",
+} as const;
+
+export const ielts = {
+  name: "IELTS Writing Lab",
+  tagline: "Learn to think, not just to write.",
+  /** True when IELTS is served from its own subdomain. */
+  isSubdomain: ieltsEnvUrl !== "",
+  /** Public origin + base path of the IELTS site, e.g. https://ielts.x.id.vn or http://localhost:3000/ielts */
+  url: ieltsEnvUrl || `${mainUrl}${IELTS_PATH_PREFIX}`,
+  /** Prefix for internal IELTS links: "" on the subdomain, "/ielts" in path mode. */
+  basePath: ieltsEnvUrl ? "" : IELTS_PATH_PREFIX,
+} as const;
+
+/** Internal href inside the IELTS site, e.g. ieltsHref("/vi/writing-lab"). */
+export function ieltsHref(path = "/") {
+  const p = path.startsWith("/") ? path : `/${path}`;
+  return `${ielts.basePath}${p === "/" && ielts.basePath ? "" : p}` || "/";
+}
+
+/** Absolute IELTS URL (canonical, sitemap, OG, cross-site links). */
+export function ieltsAbsolute(path = "/") {
+  const p = path.startsWith("/") ? path : `/${path}`;
+  return `${ielts.url}${p === "/" ? "" : p}` || ielts.url;
+}
+
+/** Absolute main-site URL. */
+export function mainAbsolute(path = "/") {
+  const p = path.startsWith("/") ? path : `/${path}`;
+  return `${site.mainUrl}${p === "/" ? "" : p}` || site.mainUrl;
+}
+
+/**
+ * Link from the IELTS site back to the main site.
+ * Absolute in subdomain mode (different host), relative in path mode.
+ */
+export function mainHrefFromIelts(path = "/") {
+  return ielts.isSubdomain ? mainAbsolute(path) : path;
+}
+
+/** Link from the main site to the IELTS site. */
+export function ieltsHrefFromMain(path = "/") {
+  return ielts.isSubdomain ? ieltsAbsolute(path) : ieltsHref(path);
+}

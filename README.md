@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Digital Identity
 
-## Getting Started
+This repository holds a personal website and **IELTS Writing Lab** (*Learn to think, not just to write.*). Both are one Next.js 16
+app with a shared design system, served on two hosts:
 
-First, run the development server:
+- `yourdomain` is the personal website (`src/app/(main)`).
+- `ielts.yourdomain` is IELTS Writing Lab, in Vietnamese and English (`src/app/ielts`).
+
+## Quick start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # http://localhost:3000  and  http://localhost:3000/ielts
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` | dev server (drafts visible) |
+| `npm run build` | production build (static pages) |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | route type generation + `tsc` |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+content/              MDX: IELTS pieces, IELTS pages, templates
+docs/                 ROUTING.md · CONTENT.md · DEPLOYMENT.md
+src/proxy.ts          host-based routing (ielts.* → /ielts)
+src/config/           site + domains, i18n, navigation, content taxonomy, profile placeholders
+src/lib/content/      typed MDX loader (zod schema, related, prev/next, tags, translations)
+src/lib/seo.ts        canonical / OG / hreflang builders
+src/components/       ui/ · layout/ · article/ · mdx/
+src/app/(main)/       personal site (root layout)
+src/app/ielts/[lang]/ IELTS site (root layout, vi | en)
+```
 
-## Learn More
+## Design tokens
 
-To learn more about Next.js, take a look at the following resources:
+These are defined in `src/app/globals.css`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Token | Value | Use |
+| --- | --- | --- |
+| `bg` | `#F7F7F5` | page background |
+| `fg` | `#191919` | primary text |
+| `subtle` | `#A5A5A0` | brand secondary: rules, numerals, decoration |
+| `muted` | `#6B6B66` | secondary **text** (the darker step keeps it readable, WCAG AA) |
+| `accent` | `#7896B5` | accent marks, underlines, focus ring |
+| `accent-ink` | `#4A6A8C` | accent-coloured **text** and links (WCAG AA) |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The fonts are Manrope (UI and headings), Inter (long-form reading), Geist Mono (metadata) and Instrument Serif
+(editorial display, English only, because the font has no Vietnamese glyphs; Vietnamese headings fall back to Manrope).
 
-## Deploy on Vercel
+## Not in the MVP
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The backend, database, authentication and AI feedback are planned for Phases 2–3. The content layer is a plain
+typed module (`src/lib/content`), so it can later be backed by an API without changing pages.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `docs/` for routing, content authoring and deployment.
